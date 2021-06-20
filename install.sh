@@ -22,9 +22,7 @@ sleep 4
 echo -e "Bot criado por:"
 sleep 1
 
-echo -e " ${RED} ▀█▀ ▀▀█▀▀ █▀▀█ █░░░ █░▒█"
-echo -e " ${RED} ░█░ ░▒█░░ █▄▄█ █░░░ █░▒█"
-echo -e " ${RED} ▄█▄ ░▒█░░ █░▒█ █▄▄█ ▀▄▄▀"
+echo -e " ${RED} NOAH-BOT"
 sleep 2
 
 echo -e " ${YELLOW} Olá"
@@ -114,6 +112,6 @@ npm audit fix --force
 
 echo -e " ${YELLOW} Todas as dependências foram instaladas."
 echo -e " ${YELLOW} Atualização: mudanças mínimas"
-echo -e " ${YELLOW} Traduzido e modifcado por Italu. Base original por MhankBarBar"
+echo -e " ${YELLOW} Modifcado por Andre. Base original por MhankBarBar"
 echo -e " ${YELLOW} Use o comando: ${GREEN}npm start ${YELLOW}para iniciar o bot."
 
