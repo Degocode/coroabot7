@@ -1,6 +1,7 @@
 const ttthelp = (prefix) => {
     return `
-「 \u{help} Tic Tac Toe \u{help} 」
+「 \u{1F4AE} Tic Tac Toe \u{1F4AE} 」
+
 ◪ BETA, EVITE USAR
 
 ◪ APENAS PARA GRUPOS
