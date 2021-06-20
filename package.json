@@ -1,7 +1,7 @@
 {
-  "name": "Tiringa-BOT",
-  "version": "0.13.0",
-  "description": "Dono: Italu. Base original por: MhankBarBar",
+  "name": "Andre-Bot",
+  "version": "3.5",
+  "description": "Dono: Andre Noah",
   "main": "index.js",
   "directories": {
     "lib": "lib"
@@ -46,10 +46,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/italuH/Tiringa-BOT.git"
+    "url": "git+https://github.com/Degocode/coroabot7.git"
   },
   "bugs": {
-    "url": "https://github.com/italuH/Tiringa-BOT/issues"
+    "url": "https://github.com/Degocode/coroabot7/issues"
   },
-  "homepage": "https://github.com/italuH/Tiringa-BOT#readme"
+  "homepage": "https://github.com/Degocode/coroabot7#readme"
 }
