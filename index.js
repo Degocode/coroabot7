@@ -70,9 +70,9 @@ const blocked = []
 //_VCARD DONO DO BOT
 const vcard = 'BEGIN:VCARD\n' 
             + 'VERSION:3.0\n' 
-            + 'FN:Italu🧙‍♂️\n' 
-            + 'ORG:Dono do Tiringa;\n' 
-            + 'TEL;type=CELL;type=VOICE;waid=557499510904:+55 (74) 9951-0904\n' 
+            + 'FN:Andre🧙‍♂️\n' 
+            + 'ORG:Dono do Andre Noah;\n' 
+            + 'TEL;type=CELL;type=VOICE;waid=5599068797:+55 (74) 9906-8797\n' 
             + 'END:VCARD'
 
 //_TIC-TAC-TOE By: Resen
@@ -547,57 +547,57 @@ const priorityC = () => {
 
 //_CONEXÃO WHATSAPP WEB 
 async function starts() {
-	const tiringa = new WAConnection()
-	tiringa.logger.level = 'warn'
+	const client = new WAConnection()
+	client.logger.level = 'warn'
 	console.log(banner.string)
-	tiringa.on('qr', () => {
-		console.log(color('👆'), color(' Escanear o código acima para iniciar o Tiringa-BOT!'))
+	client.on('qr', () => {
+		console.log(color('👆'), color(' Escanear o código acima para iniciar o Andre Noah!'))
 	})
 
-	fs.existsSync('./tiringa.json') && tiringa.loadAuthInfo('./tiringa.json')
-	tiringa.on('connecting', () => {
-		start('2', 'Conectando o Tiringa-BOT...')
+	fs.existsSync('./dono.json') && client.loadAuthInfo('./dono.json')
+	client.on('connecting', () => {
+		start('2', 'Conectando o Andre Noah...')
 	})
-	tiringa.on('open', () => {
-		success('2', 'Tiringa-BOT conectado!!!')
+	client.on('open', () => {
+		success('2', 'Andre Noah conectado!!!')
 	})
-	await tiringa.connect({timeoutMs: 30*1000})
-        fs.writeFileSync('./tiringa.json', JSON.stringify(tiringa.base64EncodedAuthInfo(), null, '\t'))
+	await client.connect({timeoutMs: 30*1000})
+        fs.writeFileSync('./dono.json', JSON.stringify(client.base64EncodedAuthInfo(), null, '\t'))
 
 //_FUCTION DE BOAS-VINDAS
-tiringa.on('group-participants-update', async (anu) => {
+client.on('group-participants-update', async (anu) => {
 		if (!welkom.includes(anu.jid)) return
 		try {
-			const mdata = await tiringa.groupMetadata(anu.jid)
+			const mdata = await client.groupMetadata(anu.jid)
 			console.log(anu)
 			if (anu.action == 'add') {
 				num = anu.participants[0]
 				teks = `Olá @${num.split('@')[0]}\nSeja bem vindo(a) ao grupo: ${mdata.subject}`
 				let welt = await getBuffer(`https://api-exteam.herokuapp.com/api/welcome?name=${encodeURIComponent(pushname)}&gcname=${encodeURIComponent(groupName)}&picurl=https://i.waifu.pics/8TL6ycS.jpg&gcurl=https://i.waifu.pics/8TL6ycS.jpg&mem=100`)
-				tiringa.sendMessage(mdata.id, welt, MessageType.image, {caption: teks, contextInfo: {"mentionedJid": [num]}})
+				client.sendMessage(mdata.id, welt, MessageType.image, {caption: teks, contextInfo: {"mentionedJid": [num]}})
 			} else if (anu.action == 'remove') {
 				num = anu.participants[0]
 				try {
-					ppimg = await tiringa.getProfilePicture(`${num.split('@')[0]}@c.us`)
+					ppimg = await client.getProfilePicture(`${num.split('@')[0]}@c.us`)
 				} catch {
 					ppimg = 'https://i0.wp.com/www.gambarunik.id/wp-content/uploads/2019/06/Top-Gambar-Foto-Profil-Kosong-Lucu-Tergokil-.jpg'
 				}
 				teks = `O integrante @${num.split('@')[0]} saiu do grupo... bye bye👋`
 				let buff = await getBuffer(ppimg)
-				tiringa.sendMessage(mdata.id, buff, MessageType.image, {caption: teks, contextInfo: {"mentionedJid": [num]}})
+				client.sendMessage(mdata.id, buff, MessageType.image, {caption: teks, contextInfo: {"mentionedJid": [num]}})
 			}
 		} catch (e) {
 			console.log('Error : %s', color(e, 'red'))
 		}
 	})
-    tiringa.on('CB:Blocklist', json => {
+    client.on('CB:Blocklist', json => {
 		if (blocked.length > 2) return
 	    for (let i of json[1].blocklist) {
 	    	blocked.push(i.replace('c.us','s.whatsapp.net'))
 	    }
 	})
 
-      tiringa.on('chat-update', async (mek) => {
+      client.on('chat-update', async (mek) => {
 		try {
             if (!mek.hasNewMessage) return
             mek = mek.messages.all()[0]
@@ -622,13 +622,13 @@ tiringa.on('group-participants-update', async (anu) => {
 			const isCmd = body.startsWith(prefix)
             const anun = budy.slice(0).trim().split(/ +/).shift().toLowerCase()
             const testat = budy
-            const totalchat = await tiringa.chats.all()
-			const botNumber = tiringa.user.jid
-			const ownerNumber = [`557499510904@s.whatsapp.net`]
+            const totalchat = await client.chats.all()
+			const botNumber = client.user.jid
+			const ownerNumber = [`5599068797@s.whatsapp.net`]
 			const ownerNumberB = []
 			const isGroup = from.endsWith('@g.us')
 			const sender = isGroup ? mek.participant : mek.key.remoteJid
-			const groupMetadata = isGroup ? await tiringa.groupMetadata(from) : ''
+			const groupMetadata = isGroup ? await client.groupMetadata(from) : ''
 			const groupName = isGroup ? groupMetadata.subject : ''
 			const groupId = isGroup ? groupMetadata.jid : ''
 			const groupMembers = isGroup ? groupMetadata.participants : ''
@@ -646,25 +646,25 @@ tiringa.on('group-participants-update', async (anu) => {
             const q = args.join(' ')
             const id = botNumber
             const tescuk = ["0@s.whatsapp.net"]
-			let pushname = tiringa.contacts[sender] != undefined ? tiringa.contacts[sender].vname || tiringa.contacts[sender].notify: undefined
+			let pushname = client.contacts[sender] != undefined ? client.contacts[sender].vname || client.contacts[sender].notify: undefined
     
 			const reply = (tej) => {
-				tiringa.sendMessage(from, tej, text, {quoted:mek})
+				client.sendMessage(from, tej, text, {quoted:mek})
 			}
 			const sendMess = (teks) => {
-				tiringa.sendMessage(from, teks, text)
+				client.sendMessage(from, teks, text)
 			}
             const sendImage = (tis) => {
-		        tiringa.sendMessage(from, tis, image, {quoted:mek})
+		        client.sendMessage(from, tis, image, {quoted:mek})
             }
 			const mentions = (ops, memberr, sender, id) => {
-				(id == null || id == undefined || id == false) ? tiringa.sendMessage(from, ops.trim(), extendedText, {contextInfo: {"mentionedJid": memberr}}) : tiringa.sendMessage(from, ops.trim(), extendedText, {quoted: mek, contextInfo: {"mentionedJid": memberr}})
+				(id == null || id == undefined || id == false) ? client.sendMessage(from, ops.trim(), extendedText, {contextInfo: {"mentionedJid": memberr}}) : client.sendMessage(from, ops.trim(), extendedText, {quoted: mek, contextInfo: {"mentionedJid": memberr}})
 			}
 			const costum = (pesan, tipe, target, target2) => {
-                 tiringa.sendMessage(from, pesan, tipe, {quoted: {key: {fromMe: false, participant: `${target}`, ...(from ? {remoteJid: from}: {})}, message: {conversation: `${target2}` }}})
+                 client.sendMessage(from, pesan, tipe, {quoted: {key: {fromMe: false, participant: `${target}`, ...(from ? {remoteJid: from}: {})}, message: {conversation: `${target2}` }}})
             }
              const sendPtt = (teks) => {
-                 tiringa.sendMessage(from, audio, mp3, {quoted: mek })
+                 client.sendMessage(from, audio, mp3, {quoted: mek })
             }
              
 //_FUCTION PATENTE
@@ -681,7 +681,7 @@ const currentLevel = getLevelingLevel(sender)
 const checkId = getLevelingId(sender)
 try {
 if (currentLevel === undefined && checkId === undefined) addLevelingId(sender)
-const amountXp = Math.floor(Math.random() * (20 - 30 + 45) + 15)
+const amountXp = Math.floor(Math.random() * (0 - 0 + 10) + 0)
 const requiredXp = 20 * Math.pow(currentLevel, 2) + 150 * currentLevel + 1000
 const getLevel = getLevelingLevel(sender)
 const namelv = checkId
@@ -704,8 +704,8 @@ text:
   
    ════❖LEVEL UP❖════`,
 contextInfo: {mentionedJid: [namelv]}}
-tiringa.sendMessage(from, lvup, text, {quoted: mek})
-//tiringa.sendMessage(from, lvup, text, {quoted: mek, contextInfo: {mentionedJid: [sender]}}
+client.sendMessage(from, lvup, text, {quoted: mek})
+//client.sendMessage(from, lvup, text, {quoted: mek, contextInfo: {mentionedJid: [sender]}}
 }
 } catch (err) {
 console.error(err)
@@ -728,14 +728,14 @@ if (budy.includes("://chat.whatsapp.com/")){
 if (!isGroup) return
 if (!isAntilink) return
 if (isGroupAdmins) return('🧐')
-tiringa.updatePresence(from, Presence.composing)
+client.updatePresence(from, Presence.composing)
 var kic = `${sender.split("@")[0]}@s.whatsapp.net`
 reply(`Link de grupos não são permitidos aqui${sender.split("@")[0]}`)
 setTimeout( () => {
-tiringa.groupRemove(from, [kic]).catch((e)=>{reply(`*ERR:* ${e}`)})
+client.groupRemove(from, [kic]).catch((e)=>{reply(`*ERR:* ${e}`)})
 }, 1000)
 setTimeout( () => {
-tiringa.updatePresence(from, Presence.composing)
+client.updatePresence(from, Presence.composing)
 reply("adios")
 }, 0)
 }
@@ -750,9 +750,9 @@ addLevelingXp(tttset.player, randomEndTTTXP)
 const checkTTTIdEnd = getTTTId(tttset.player)
 if (checkTTTIdEnd === undefined) addTTTId(tttset.player)
 addTTTpoints(tttset.player, randomEndTTTXP)
-tiringa.sendMessage(tttset.local,`❌ O TEMPO DE JOGO EXPIROU ❌\n\n➣  PUNIÇÃO: ${randomEndTTTXP} XP 🔮`, text, {quoted: tttset.mentionPlayer})
+client.sendMessage(tttset.local,`❌ O TEMPO DE JOGO EXPIROU ❌\n\n➣  PUNIÇÃO: ${randomEndTTTXP} XP 🔮`, text, {quoted: tttset.mentionPlayer})
 } else {
-tiringa.sendMessage(tttset.local,`❌ O TEMPO DE JOGO EXPIROU ❌`, text, {quoted: tttset.mentionPlayer})
+client.sendMessage(tttset.local,`❌ O TEMPO DE JOGO EXPIROU ❌`, text, {quoted: tttset.mentionPlayer})
 }
 esp.a1 = "🔲"; esp.a2 = "🔲"; esp.a3 = "🔲"
 esp.b1 = "🔲"; esp.b2 = "🔲"; esp.b3 = "🔲"
@@ -773,13 +773,13 @@ const isQuotedSticker = type === 'extendedTextMessage' && content.includes('stic
 colors = ['red','white','black','blue','yellow','green','aqua','magenta','orange']
 
 //_VISUALIZA AS MENSAGENS 
-tiringa.chatRead(from)
+client.chatRead(from)
 
 //if (isCmd && isMute && !isGroupAdmins && !isOwner && !isPremium) return
 
 //ANTI-SPAM BY ITALU
 if (isCmd && msgFilter.isFiltered(from)) {
-tiringa.sendMessage(from, `Sem flood @${sender.split('@')[0]}...\n\nAguarde 5 segundos antes de usar outro comando✅`, text, {quoted: mek, contextInfo: {mentionedJid: [sender]}})
+client.sendMessage(from, `Sem flood @${sender.split('@')[0]}...\n\nAguarde 5 segundos antes de usar outro comando✅`, text, {quoted: mek, contextInfo: {mentionedJid: [sender]}})
 return console.log(color('SPAM', 'red'), color(moment.tz('America/Sao_Paulo').format('HH:mm:ss'), 'yellow'), color(`${command}`),'DE:', color(pushname))}
 		
 //_CONTAGEM DE COMANDOS
@@ -801,53 +801,53 @@ if (!isGroup && !isCmd) console.log(color('MENSAGEM RECEBIDA', 'aqua'), color('H
 //_RESPONDER AUTOMATICAMENTE
 if ((budy === 'bot') || (budy === 'BOT') || (budy === 'Bot')) {
 buf = fs.readFileSync(`./src/onichan.mp3`)
-tiringa.sendMessage(from, buf, audio, {mimetype: 'audio/mp4', quoted: mek, ptt: true})
+client.sendMessage(from, buf, audio, {mimetype: 'audio/mp4', quoted: mek, ptt: true})
 }
 if ((budy === "fdp") || (budy === "Fdp") || (budy === "FDP")) {
-tiringa.updatePresence(from, Presence.composing)
+client.updatePresence(from, Presence.composing)
 reply("teu pai")
 }
 if ((budy === "oi bot") || (budy === "Oi bot")) {
-tiringa.updatePresence(from, Presence.composing)
+client.updatePresence(from, Presence.composing)
 reply("oi")
 }
 if ((budy === "vtnc") || (budy === "Vtnc")) {
-tiringa.updatePresence(from, Presence.composing)
+client.updatePresence(from, Presence.composing)
 reply("Tomar no cu é vitamina, como você e suas primas")
 }
 if ((budy === "vsfd") || (budy === "Vsfd")) {
-tiringa.updatePresence(from, Presence.composing)
+client.updatePresence(from, Presence.composing)
 reply("Vtnc")
 }
 if ((budy.match("sexo")) || (budy.match("Sexo"))) {
-tiringa.updatePresence(from, Presence.composing)
+client.updatePresence(from, Presence.composing)
 reply(`você falou em coito?KKKKKKKKKKKKKKKKKKKKKKKKK`)
 }
 if (budy === "pnc") {
-tiringa.updatePresence(from, Presence.composing)
+client.updatePresence(from, Presence.composing)
 reply(`vsfd ${pushname}`)
 }
 if ((budy === "cleito") || (budy === "Cleito")) {
 cleitu = fs.readFileSync(`./src/edmi.webp`)
-tiringa.sendMessage(from, cleitu, sticker, {quoted: mek})
+client.sendMessage(from, cleitu, sticker, {quoted: mek})
 }
 if ((budy === "Edmilson") || (budy === "edmilson")) {
 cleitu = fs.readFileSync(`./src/cleito.webp`)
-tiringa.sendMessage(from, cleitu, sticker, {quoted: mek})
+client.sendMessage(from, cleitu, sticker, {quoted: mek})
 }
 if ((budy.includes('kkkkkkkkkkk')) || (budy.includes('KKKKKKKKKK'))) {
 reply('Qual a graça?🤨')
 }
 
-if (budy.match('tiringa')) {
+if (budy.match('client')) {
 result = fs.readFileSync(`./src/mask.webp`)
-tiringa.sendMessage(from, result, sticker, {quoted: mek })
-} else if (budy.match('Tiringa')) {
+client.sendMessage(from, result, sticker, {quoted: mek })
+} else if (budy.match('bot')) {
 result = fs.readFileSync(`./src/mask.webp`)
-tiringa.sendMessage(from, result, sticker, {quoted: mek })
-} else if (budy.match('TIRINGA')) {
+client.sendMessage(from, result, sticker, {quoted: mek })
+} else if (budy.match('Bot')) {
 result = fs.readFileSync(`./src/mask.webp`)
-tiringa.sendMessage(from, result, sticker, {quoted: mek })
+client.sendMessage(from, result, sticker, {quoted: mek })
 }
 
 switch(testat) {
@@ -959,12 +959,12 @@ break
 //_TESTES
 case 'mz24':
 if (!isZ24) return reply('Comando exclusivo z24')
-tiringa.sendMessage(from, mz(prefix), text, tescuk, cr)
+client.sendMessage(from, mz(prefix), text, tescuk, cr)
 break
 
 case 'gc':
 if (body.endsWith('Tutup')){
-  tiringa.groupSettingChange (from, GroupSettingChange.messageSend, true)
+  client.groupSettingChange (from, GroupSettingChange.messageSend, true)
 }
 break
 						             
@@ -988,12 +988,12 @@ case 'leaderboard':
 							mentions(leaderboard, mentioned_id, true)
 						} catch (err) {
 							console.log(err)
-							tiringa.sendMessage(from, `É necessário que no mínimo 3 pessoas tenham level...`, text, {quoted: mek})
+							client.sendMessage(from, `É necessário que no mínimo 3 pessoas tenham level...`, text, {quoted: mek})
 						}
 					break
 
 case 'ts':
-tiringa.sendMessage(from, bahasa(prefix, sender), text, {
+client.sendMessage(from, bahasa(prefix, sender), text, {
 quoted: mek
 })
 break
@@ -1001,27 +1001,27 @@ break
 //_TESTESS
 case 'bugreport':
 const bug = body.slice(10)
- if (args.length > 300) return tiringa.sendMessage(from, 'Máximo 300 caracteres', msgType.text, {quoted: mek})
+ if (args.length > 300) return client.sendMessage(from, 'Máximo 300 caracteres', msgType.text, {quoted: mek})
 var nomor = mek.participant
 teks1 = `[REPORT]\nDe: @${sender.split("@s.whatsapp.net")[0]}\nErro ou bug: ${bug}`
 var options = {
  text: teks1, 
 contextInfo: {mentionedJid: [sender]}, 
 }
-tiringa.sendMessage('557499510904@s.whatsapp.net', options, text, {quoted: mek})
+client.sendMessage('557499510904@s.whatsapp.net', options, text, {quoted: mek})
 reply("Mensagem enviada ao meu dono; Spam = block + ban.")
 break
 
 case 'request':
 const pesann = body.slice(8)
-if (args.length > 300) return tiringa.sendMessage(from, 'Máximo 300 caracteres', msgType.text, {quoted: mek})
+if (args.length > 300) return client.sendMessage(from, 'Máximo 300 caracteres', msgType.text, {quoted: mek})
 var nomor = mek.participant
 const teks2 = `[REQUEST]\nDe: @${sender.split("@s.whatsapp.net")[0]}\nMensagem: ${pesann}`
 var options = {
 text: teks1,
 contextInfo: {mentionedJid: [sender]},
 }
-tiringa.sendMessage('557499510904@s.whatsapp.net', options, text, {quoted: mek})
+client.sendMessage('557499510904@s.whatsapp.net', options, text, {quoted: mek})
 reply("Mensagem enviada ao meu dono; Spam = block + ban.")
 break
 
@@ -1030,7 +1030,7 @@ if (args.length < 1) return reply(`Use ${prefix}simi texto`)
 try { 
 anu = await fetchJson(`https://simsumi.herokuapp.com/api?text=${encodeURIComponent(body.slice(5))}`, {method: 'get'})
 if (anu.error) return reply('Não sei ler o que não existe 🐤 (converse cmg)')
-tiringa.sendMessage(from, `${anu.success} 🐤`, text, {quoted: mek})
+client.sendMessage(from, `${anu.success} 🐤`, text, {quoted: mek})
 } catch {
 reply(ptbr.erro)
 }
@@ -1046,7 +1046,7 @@ break
 case 'clima':
 case 'tempo':
 anu = await getBuffer(`https://api.apiflash.com/v1/urltoimage?access_key=57fcd6384cff4e529b9ca76089f05992&url=https://pt.wttr.in/${args[0]}`)
-tiringa.sendMessage(from, anu, image, {quoted: mek})
+client.sendMessage(from, anu, image, {quoted: mek})
 break
 
 case 'time':
@@ -1055,16 +1055,12 @@ const hual = `Horário: ${hott}`
 reply(hual)
 break
 
-//_GIT DO BOT
-case 'git':
-mekFilter.addFilter(from)
-tiringa.sendMessage(from, `https://github.com/italuH/Tiringa-BOT` , text, {quoted: mek})
-break
+//__não sei__//
 
 case 'macumba':
 pedido = body.slice(8)
 buf = fs.readFileSync(`./src/macu.mp4`)
-tiringa.sendMessage(from, buf, video, {quoted: mek})
+client.sendMessage(from, buf, video, {quoted: mek})
 break
 
 case 'hi':
@@ -1079,8 +1075,8 @@ if (/*horaAtual == '08:42' && */ammOff == "off" && isGroup) {
 const aMimirMp3 = fs.readFileSync('./src/acorda.mp3')
 const aMimirSt = fs.readFileSync('./src/sonic.webp')
 for (let _ of groupMembers) {
-tiringa.sendMessage(_.jid, aMimirMp3, MessageType.audio, {mimetype: 'audio/mp4', ptt:true})
-tiringa.sendMessage(_.jid, aMimirSt, sticker)
+client.sendMessage(_.jid, aMimirMp3, MessageType.audio, {mimetype: 'audio/mp4', ptt:true})
+client.sendMessage(_.jid, aMimirSt, sticker)
 }
 ammOff = "on"
 } else if (/*horaAtual != '08:42' && */ammOff == "on") {
@@ -1092,7 +1088,7 @@ break
 case 'jsonfiles':
 if (!isOwner) return reply(ptbr.ownerB())
 const daftarfile = fs.readFileSync('./database/json/daftar.json')
-tiringa.sendMessage(from, daftarfile, document, {mimetype: 'json', filename: 'daftar.json'})
+client.sendMessage(from, daftarfile, document, {mimetype: 'json', filename: 'daftar.json'})
 break
 
 case 'omais':				
@@ -1194,20 +1190,20 @@ case 'send':
 var pc = body.slice(6)
 var nomor = pc.split("|")[0];
 var pesan = pc.split("|")[1];
-tiringa.sendMessage(nomor+'@s.whatsapp.net', pesan, text)
+client.sendMessage(nomor+'@s.whatsapp.net', pesan, text)
 break
 
 case 'ttp':
 msgFilter.isFiltered(from)
 if (args.length < 1) return reply(`Use dessa forma:\nComando: ${prefix}ttp Toin gado`)
 attp2 = await getBuffer(`https://api.xteam.xyz/ttp?file&text=${encodeURIComponent(body.slice(4))}`)
-tiringa.sendMessage(from, attp2, sticker, {quoted: mek})
+client.sendMessage(from, attp2, sticker, {quoted: mek})
 break
 
 case 'attp':
 if (args.length < 1) return reply(`Use dessa forma:\nComando: ${prefix}attp Toin gado`)
 attp2 = await getBuffer(`https://api.xteam.xyz/attp?file&text=${encodeURIComponent(body.slice(5))}`)
-tiringa.sendMessage(from, attp2, sticker, {quoted: mek})
+client.sendMessage(from, attp2, sticker, {quoted: mek})
 break
 
 case 'pão':
@@ -1241,38 +1237,37 @@ levela =
 ╰╼╾╼╾╼╾╼╾╼╾╼╾╼
 
   ════❖ LEVEL ❖════`     
-tiringa.sendMessage(from, levela, text, {quoted: mek, contextInfo: {mentionedJid: [sender]}})
+client.sendMessage(from, levela, text, {quoted: mek, contextInfo: {mentionedJid: [sender]}})
 break
   
 //_ENVIA O VCARD DO DONO
 case 'criador':
 case 'vcard':
 case 'owner':
-case 'italu':
-case 'italo':
-await tiringa.sendMessage(from, {displayname: "Italu🧙‍♂️", vcard: vcard}, MessageType.contact)
+case 'dono':
+await client.sendMessage(from, {displayname: "Andre️", vcard: vcard}, MessageType.contact)
 break
                      
 case 'ownergrup':
 case 'ownergroup':
-tiringa.updatePresence(from, Presence.composing) 
+client.updatePresence(from, Presence.composing) 
 options = {
 text: `Dono do grupo: @${from.split("-")[0]}`,
 contextInfo: { mentionedJid: [from]}}
-tiringa.sendMessage(from, options, text, { quoted: mek } )
+client.sendMessage(from, options, text, { quoted: mek } )
 break
 		
 //const gy =['0','5','10','15','20','25','30','35','40','45','50','55','60','65','70','75','80','85','90','95','100']
 
 case 'testime':
 setTimeout( () => {
-tiringa.sendMessage(from, 'O tempo acabou', text) 
+client.sendMessage(from, 'O tempo acabou', text) 
 }, 10000)
 setTimeout( () => {
-tiringa.sendMessage(from, '5 segundos restantes', text)
+client.sendMessage(from, '5 segundos restantes', text)
 }, 5000)
 setTimeout( () => {
-tiringa.sendMessage(from, '10 segundos restantes', text)
+client.sendMessage(from, '10 segundos restantes', text)
 }, 0)
 break
 
@@ -1304,7 +1299,7 @@ reply(ptbr.wait())
 try {
 axios.get(`https://nekos.life/api/v2/img/meow`).then((res)=>{
 imageToBase64(res.data.url).then((response) => {var buf = Buffer.from(response, 'base64');
-tiringa.sendMessage(from, buf, image, {quoted: mek,caption: "🐱"})
+client.sendMessage(from, buf, image, {quoted: mek,caption: "🐱"})
 })})
 } catch (e) {
 console.log(`Error :`, color(e,'red'))
@@ -1321,7 +1316,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -1335,9 +1330,9 @@ if (!isOwner) return reply(ptbr.ownerB())
 pm2 = `pm2 kill`
 reply('A mimir...')
 exec(pm2, (err, stdout) => {
-if(err) return tiringa.sendMessage(from, "Erro", text, {quoted: mek})
+if(err) return client.sendMessage(from, "Erro", text, {quoted: mek})
 if (stdout) {
-tiringa.sendMessage(from, stdout, text, {quoted: mek})
+client.sendMessage(from, stdout, text, {quoted: mek})
 } 
 })
 break
@@ -1347,21 +1342,21 @@ if (!isOwner) return reply(ptbr.ownerB())
 npm = `npm start`
 reply('Reiniciando em alguns segundos...')       
 exec(npm, (err, stdout) => {
-if(err) return tiringa.sendMessage(from, "Erro", text, {quoted: mek})
+if(err) return client.sendMessage(from, "Erro", text, {quoted: mek})
 if (stdout) {
-tiringa.sendMessage(from, stdout, text, {quoted: mek})
+client.sendMessage(from, stdout, text, {quoted: mek})
 } 
 })
 break
 
 case 'exe':
-tiringa.updatePresence(from, Presence.composing) 
+client.updatePresence(from, Presence.composing) 
 if (!isOwner) return reply(ptbr.ownerB())
 const cmd = body.slice(4)
 exec(cmd, (err, stdout) => {
-if(err) return tiringa.sendMessage(from, "Comando inexistente", text, {quoted: mek})
+if(err) return client.sendMessage(from, "Comando inexistente", text, {quoted: mek})
 if (stdout) {
-tiringa.sendMessage(from, stdout, text, {quoted: mek})
+client.sendMessage(from, stdout, text, {quoted: mek})
 }
 })
 break
@@ -1400,14 +1395,14 @@ Tanggal Upload : ${anu.upload_date}
 File Tipe : ${anu.file_type}
 Link Download : ${anu.download}
 Deskripsi : ${anu.description}`
-tiringa.sendMessage(from, teks, text, {quoted: mek})
+client.sendMessage(from, teks, text, {quoted: mek})
 costum(buffer, MessageType.document)
 break
 
 case 'playstore': 
 anu = await fetchJson(`https://api.zeks.xyz/api/sgplay?apikey=apivinz&q=${body.slice(11)}`, {method: 'get'})
 buffer = await getBuffer(`https://i.ibb.co/znvZ20B/9b667c9d4b1b.jpg`)
-tiringa.sendMessage(from, buffer, image, {quoted: mek})
+client.sendMessage(from, buffer, image, {quoted: mek})
 teks = '𝗣𝗹𝗮𝘆 𝘀𝘁𝗼𝗿𝗲\n'
 for (let i of anu.result) {
 teks = `Nama Apk : ${i.title}
@@ -1430,7 +1425,7 @@ anu = await fetchJson(`https://api.zeks.xyz/api/searchsticker?apikey=apivinz&q=$
 buffer = await getBuffer(anu.thumb)
 teks = `Nama Sticker : ${anu.title}`
 dung = (anu.sticker)
-tiringa.sendMessage(from, buffer, image, {quoted: mek, caption: teks})
+client.sendMessage(from, buffer, image, {quoted: mek, caption: teks})
 var tes2 =  dung[Math.floor(Math.random() * dung.length)];
 exec(`wget ${tes2} -O ${ranp} && ffmpeg -i ${ranp} -vcodec adminwebp -filter:v fps=fps=15 -lossless 1 -loop 0 -preset default -an -vsync 0 -s 512:512 ${rano}`, (err) => {
 if (err) return reply('Error cok')
@@ -1453,7 +1448,7 @@ Bussiness : ${anu.is_bussiness}
 Private : ${anu.is_private}
 Link : https://www.instagram.com/${anu.username}
 Bio : ${anu.bio}`
-tiringa.sendMessage(from, buffer, image, {quoted: mek, caption: teks})
+client.sendMessage(from, buffer, image, {quoted: mek, caption: teks})
 break
 
 case 'shopee': 
@@ -1472,7 +1467,7 @@ Url : ${i.url}
 Deskripsi : ${i.desc}\n\n𝗦𝗛𝗢𝗣𝗘𝗘
 `
 }
-tiringa.sendMessage(from, buffer, image, {quoted: mek, caption: teks.trim()})
+client.sendMessage(from, buffer, image, {quoted: mek, caption: teks.trim()})
 break
 
 case 'ytsearch': 
@@ -1493,7 +1488,7 @@ Tanggal Upload : ${i.video.upload_date}
 Views : ${i.video.views}\n\n𝗬𝗼𝘂𝘁𝘂𝗯𝗲 𝘀𝗲𝗮𝗿𝗰𝗵
 `
 }
-tiringa.sendMessage(from, buffer, image, {quoted: mek, caption: teks.trim()})
+client.sendMessage(from, buffer, image, {quoted: mek, caption: teks.trim()})
 break
 
 case 'neonime': 
@@ -1551,11 +1546,11 @@ break
 case 'togif': // by lindow
 if ((isMedia && !mek.message.videoMessage || isQuotedSticker) && args.length == 0) {
 const encmediaaa = isQuotedSticker ? JSON.parse(JSON.stringify(mek).replace('quotedM','m')).message.extendedTextMessage.contextInfo : mek
-const mediaaa = await tiringa.downloadAndSaveMediaMessage(encmediaaa)
+const mediaaa = await client.downloadAndSaveMediaMessage(encmediaaa)
 reply(ptbr.wait())
 a = await webp2gifFile(mediaaa)
 mp4 = await getBuffer(a.result)
-tiringa.sendMessage(from, mp4, MessageType.video, {mimetype: 'video/gif', filename: `stick.gif`, quoted: mek, caption: '✅'})
+client.sendMessage(from, mp4, MessageType.video, {mimetype: 'video/gif', filename: `stick.gif`, quoted: mek, caption: '✅'})
 fs.unlinkSync(mediaaa)
 }
 break
@@ -1564,7 +1559,7 @@ case 'shutdown':
 if (!isOwner) return reply(ptbr.ownerB())
 reply('Desligando em 3 segundos....') 
 setTimeout( () => {
-tiringa.close() }, 3000)
+client.close() }, 3000)
 break
 
 //_NULIS
@@ -1575,7 +1570,7 @@ reply(ptbr.wait())
 anu = await fetchJson(`https://tools.zone-xsec.com/api/nulis.php?q=${teks}`, {method: 'get'})
 if (anu.error) return reply(anu.error)
 buff = await getBuffer(anu.image)
-tiringa.sendMessage(from, buff, image, {quoted: mek, caption: '✏📕'})
+client.sendMessage(from, buff, image, {quoted: mek, caption: '✏📕'})
 break
 
 //_INFORMAÇÕES DO USUÁRIO
@@ -1590,7 +1585,7 @@ const idad = getRegisterAge(sender)
 const regin = getRegisterName(sender)
 const requirXp = 500 * (Math.pow(2, usLevel) - 1)
 try {
-ppimg = await tiringa.getProfilePicture(`${sender.split('@')[0]}@c.us`)
+ppimg = await client.getProfilePicture(`${sender.split('@')[0]}@c.us`)
 } catch {
 ppimg = 'https://i0.wp.com/www.gambarunik.id/wp-content/uploads/2019/06/Top-Gambar-Foto-Profil-Kosong-Lucu-Tergokil-.jpg'
 }
@@ -1608,7 +1603,7 @@ const pf =
   ‣ Código: ${serh}
 `
 its = await getBuffer (ppimg)
-tiringa.sendMessage(from, its, image, {quoted: mek, caption: pf, contextInfo: {mentionedJid: [sender]}})
+client.sendMessage(from, its, image, {quoted: mek, caption: pf, contextInfo: {mentionedJid: [sender]}})
 if(usLevel == undefined && usXp == undefined && usTime == undefined && serh == undefined) {
 reply('Informações com "undefined" indicam que você ainda não se registrou \nUse o comando =registrar')
 }
@@ -1618,13 +1613,13 @@ break
 case 'reversevid':
 if (!isQuotedVideo) return reply('Marque um vídeo')
 encmedia = JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo
-media = await tiringa.downloadAndSaveMediaMessage(encmedia)
+media = await client.downloadAndSaveMediaMessage(encmedia)
 ran = getRandom('.mp4')
 exec(`ffmpeg -i ${media} -vf reverse -af areverse ${ran}`, (err) => {
 fs.unlinkSync(media)
 if (err) return reply(`Err: ${err}`)
 buffer453 = fs.readFileSync(ran)
-tiringa.sendMessage(from, buffer453, video, { mimetype: 'video/mp4', quoted: mek })
+client.sendMessage(from, buffer453, video, { mimetype: 'video/mp4', quoted: mek })
 fs.unlinkSync(ran)
 })
 break
@@ -1634,13 +1629,13 @@ case 'fastvid':
 if (!isQuotedVideo) return reply('Marque um vídeo')
 reply(ptbr.wait())
 encmedia = JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo
-media = await tiringa.downloadAndSaveMediaMessage(encmedia)
+media = await client.downloadAndSaveMediaMessage(encmedia)
 ran = getRandom('.mp4')
 exec(`ffmpeg -i ${media} -filter_complex "[0:v]setpts=0.5*PTS[v];[0:a]atempo=2[a]" -map "[v]" -map "[a]" ${ran}`, (err) => {
 fs.unlinkSync(media)
 if (err) return reply(`Err: ${err}`)
 buffer453 = fs.readFileSync(ran)
-tiringa.sendMessage(from, buffer453, video, { mimetype: 'video/mp4', quoted: mek })
+client.sendMessage(from, buffer453, video, { mimetype: 'video/mp4', quoted: mek })
 fs.unlinkSync(ran)
 })		
 break
@@ -1650,13 +1645,13 @@ case 'slowvid':
 if (!isQuotedVideo) return fakegroup('Marque um vídeo')
 reply(ptbr.wait())
 encmedia = JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo
-media = await tiringa.downloadAndSaveMediaMessage(encmedia)
+media = await client.downloadAndSaveMediaMessage(encmedia)
 ran = getRandom('.mp4')
 exec(`ffmpeg -i ${media} -filter_complex "[0:v]setpts=2*PTS[v];[0:a]atempo=0.5[a]" -map "[v]" -map "[a]" ${ran}`, (err) => {
 fs.unlinkSync(media)
 if (err) return fakegroup(`Err: ${err}`)
 buffer453 = fs.readFileSync(ran)
-tiringa.sendMessage(from, buffer453, video, { mimetype: 'video/mp4', quoted: mek })
+client.sendMessage(from, buffer453, video, { mimetype: 'video/mp4', quoted: mek })
 fs.unlinkSync(ran)
 })
 break
@@ -1665,13 +1660,13 @@ break
 case 'nightcore':
 if (!isQuotedAudio) return reply('Marque um áudio')
 encmedia = JSON.parse(JSON.stringify(mek).replace('quotedM','m')).message.extendedTextMessage.contextInfo
-media = await tiringa.downloadAndSaveMediaMessage(encmedia)
+media = await client.downloadAndSaveMediaMessage(encmedia)
 ran = getRandom('.mp3')
 exec(`ffmpeg -i ${media} -filter:a atempo=1.06,asetrate=44100*1.25 ${ran}`, (err, stderr, stdout) => {
 fs.unlinkSync(media)
 if (err) return reply('Error!')
 hah = fs.readFileSync(ran)
-tiringa.sendMessage(from, hah, audio, {mimetype: 'audio/mp4', ptt:true, quoted: mek})
+client.sendMessage(from, hah, audio, {mimetype: 'audio/mp4', ptt:true, quoted: mek})
 fs.unlinkSync(ran)
 })
 break   
@@ -1681,13 +1676,13 @@ case 'slow':
 msgFilter.isFiltered(from)
 if (!isQuotedAudio) return reply('Marque um áudio')
 low = JSON.parse(JSON.stringify(mek).replace('quotedM','m')).message.extendedTextMessage.contextInfo
-slo = await tiringa.downloadAndSaveMediaMessage(low)
+slo = await client.downloadAndSaveMediaMessage(low)
 ran = getRandom('.mp3')
 exec(`ffmpeg -i ${slo} -filter:a "atempo=0.9,asetrate=44100" ${ran}`, (err, stderr, stdout) => {
 fs.unlinkSync(slo)
 if (err) return reply('Error!')
 hah = fs.readFileSync(ran)
-tiringa.sendMessage(from, hah, audio, {mimetype: 'audio/mp4', ptt:true, quoted: mek})
+client.sendMessage(from, hah, audio, {mimetype: 'audio/mp4', ptt:true, quoted: mek})
 fs.unlinkSync(ran)
 })
 break
@@ -1697,13 +1692,13 @@ case 'esquilo':
 msgFilter.isFiltered(from)
 if (!isQuotedAudio) return reply('Marque um áudio')
 pai = JSON.parse(JSON.stringify(mek).replace('quotedM','m')).message.extendedTextMessage.contextInfo
-tup = await tiringa.downloadAndSaveMediaMessage(pai)
+tup = await client.downloadAndSaveMediaMessage(pai)
 ran = getRandom('.mp3')
 exec(`ffmpeg -i ${tup} -filter:a "atempo=0.7,asetrate=65100" ${ran}`, (err, stderr, stdout) => {
 fs.unlinkSync(tup)
 if (err) return reply('Error!')
 hah = fs.readFileSync(ran)
-tiringa.sendMessage(from, hah, audio, {mimetype: 'audio/mp4', ptt:true, quoted: mek})
+client.sendMessage(from, hah, audio, {mimetype: 'audio/mp4', ptt:true, quoted: mek})
 fs.unlinkSync(ran)
 })
 break
@@ -1713,13 +1708,13 @@ case 'gemuk':
 msgFilter.isFiltered(from)
 if (!isQuotedAudio) return reply('Marque um áudio')
 muk = JSON.parse(JSON.stringify(mek).replace('quotedM','m')).message.extendedTextMessage.contextInfo
-gem = await tiringa.downloadAndSaveMediaMessage(muk)
+gem = await client.downloadAndSaveMediaMessage(muk)
 ran = getRandom('.mp3')
 exec(`ffmpeg -i ${gem} -filter:a "atempo=1.6,asetrate=22100" ${ran}`, (err, stderr, stdout) => {
 fs.unlinkSync(gem)
 if (err) return reply('Error!')
 hah = fs.readFileSync(ran)
-tiringa.sendMessage(from, hah, audio, {mimetype: 'audio/mp4', ptt:true, quoted: mek})
+client.sendMessage(from, hah, audio, {mimetype: 'audio/mp4', ptt:true, quoted: mek})
 fs.unlinkSync(ran)
 })
 break
@@ -1728,13 +1723,13 @@ break
 case 'fast':
 if (!isQuotedAudio) return reply('Marque um áudio')
 encmedia = JSON.parse(JSON.stringify(mek).replace('quotedM','m')).message.extendedTextMessage.contextInfo
-media = await tiringa.downloadAndSaveMediaMessage(encmedia)
+media = await client.downloadAndSaveMediaMessage(encmedia)
 ran = getRandom('.mp3')
 exec(`ffmpeg -i ${media} -filter:a "atempo=0.9,asetrate=95100" ${ran}`, (err, stderr, stdout) => {
 fs.unlinkSync(media)
 if (err) return reply('Erro')
 hah = fs.readFileSync(ran)
-tiringa.sendMessage(from, hah, audio, {mimetype: 'audio/mp4', ptt:true, quoted: mek})
+client.sendMessage(from, hah, audio, {mimetype: 'audio/mp4', ptt:true, quoted: mek})
 fs.unlinkSync(ran)
 })
 break
@@ -1744,13 +1739,13 @@ case 'bass':
 msgFilter.isFiltered(from)
 if (!isQuotedAudio) return reply('Marque um áudio')
 ass = JSON.parse(JSON.stringify(mek).replace('quotedM','m')).message.extendedTextMessage.contextInfo
-bas = await tiringa.downloadAndSaveMediaMessage(ass)
+bas = await client.downloadAndSaveMediaMessage(ass)
 ran = getRandom('.mp3')
 exec(`ffmpeg -i ${bas} -af equalizer=f=20:width_type=o:width=2:g=15 ${ran}`, (err, stderr, stdout) => {
 fs.unlinkSync(bas)
 if (err) return reply('Error!')
 hah = fs.readFileSync(ran)
-tiringa.sendMessage(from, hah, audio, {mimetype: 'audio/mp4', ptt:true, quoted: mek})
+client.sendMessage(from, hah, audio, {mimetype: 'audio/mp4', ptt:true, quoted: mek})
 fs.unlinkSync(ran)
 })
 break
@@ -1761,13 +1756,13 @@ case 'estourar':
 msgFilter.isFiltered(from)
 if (!isQuotedAudio) return reply('Marque um áudio')
 ass = JSON.parse(JSON.stringify(mek).replace('quotedM','m')).message.extendedTextMessage.contextInfo
-bas = await tiringa.downloadAndSaveMediaMessage(ass)
+bas = await client.downloadAndSaveMediaMessage(ass)
 ran = getRandom('.mp3')
 exec(`ffmpeg -i ${bas} -af equalizer=f=90:width_type=o:width=2:g=30 ${ran}`, (err, stderr, stdout) => {
 fs.unlinkSync(bas)
 if (err) return reply('Error!')
 hah = fs.readFileSync(ran)
-tiringa.sendMessage(from, hah, audio, {mimetype: 'audio/mp4', ptt:true, quoted: mek})
+client.sendMessage(from, hah, audio, {mimetype: 'audio/mp4', ptt:true, quoted: mek})
 fs.unlinkSync(ran)
 })
 break
@@ -1775,7 +1770,7 @@ break
 //_INFORMAÇÕES DO BOT		
 case 'info':
 msgFilter.isFiltered(from)
-me = tiringa.user
+me = client.user
 uptime = process.uptime()
 inf =
  `‣ Nome do bot: ${me.name}
@@ -1786,7 +1781,7 @@ inf =
   ‣ Total de usuários: ${_registered.length} usuários
   ‣ Total chats: ${totalchat.length}`
 buffer = await getBuffer(me.imgUrl)
-tiringa.sendMessage(from, buffer, image, {caption: inf, contextInfo: {mentionedJid: [me]}})
+client.sendMessage(from, buffer, image, {caption: inf, contextInfo: {mentionedJid: [me]}})
 break
 
 //_INFORMAÇÕES DO GRUPO
@@ -1796,12 +1791,12 @@ case 'groupinfo':
 case 'infogrup':
 case 'grupinfo':
 msgFilter.isFiltered(from)
-tiringa.updatePresence(from, Presence.composing)
+client.updatePresence(from, Presence.composing)
 if (!isGroup) return reply(ptbr.group())
 let { owner, creation, participants, desc } = groupMetadata;
 const creationTime = moment.unix(creation);
 try {
-ppUrl = await tiringa.getProfilePicture(from)
+ppUrl = await client.getProfilePicture(from)
 } catch {
 ppUrl = 'https://i0.wp.com/www.gambarunik.id/wp-content/uploads/2019/06/Top-Gambar-Foto-Profil-Kosong-Lucu-Tergokil-.jpg'
 }
@@ -1815,7 +1810,7 @@ infogp =
   ‣Total de membros: ${participants.length} membros
   ‣Descrição:
   ${desc ? desc : ''}`
-await tiringa.sendMessage(from, buffer, image, {quoted: mek, caption: infogp, contextInfo: {mentionedJid: [owner.split]}})
+await client.sendMessage(from, buffer, image, {quoted: mek, caption: infogp, contextInfo: {mentionedJid: [owner.split]}})
 break
 
 //_TEMPO DE RESPOSTA DO BOT		
@@ -1824,9 +1819,9 @@ case 'speed':
 msgFilter.isFiltered(from)
 const timestamp = speed();
 const latensi = speed() - timestamp
-tiringa.updatePresence(from, Presence.composing)
+client.updatePresence(from, Presence.composing)
 uptime = process.uptime()
-tiringa.sendMessage(from, `Pong!\nTempo de resposta: ${latensi.toFixed(4)} segundos\n`, text, {quoted: mek})
+client.sendMessage(from, `Pong!\nTempo de resposta: ${latensi.toFixed(4)} segundos\n`, text, {quoted: mek})
 break
 
 //_BUSCA IMAGEM NO PINTEREST		
@@ -1835,14 +1830,14 @@ case 'image':
 case 'imagem':
 msgFilter.isFiltered(from)
 if (args.length < 1) return reply('Digite o comando juntamente com o que você deseja buscar')
-tiringa.updatePresence(from, Presence.composing)
+client.updatePresence(from, Presence.composing)
 reply(ptbr.wait())
 try {
 data = await fetchJson(`https://api.fdci.se/sosmed/rep.php?gambar=${args}`, {method: 'get'})
 n = JSON.parse(JSON.stringify(data));
 nimek = n[Math.floor(Math.random() * n.length)];
 pok = await getBuffer(nimek)
-tiringa.sendMessage(from, pok, image, {quoted: mek, caption: `Achei isso sobre: ${args}`})
+client.sendMessage(from, pok, image, {quoted: mek, caption: `Achei isso sobre: ${args}`})
 } catch {
 reply(`Não econtrei nada sobre ${agrs}...`)
 }
@@ -1852,8 +1847,8 @@ break
 case 'online':
 msgFilter.isFiltered(from)
 let ido = args && /\d+\-\d+@g.us/.test(args[0]) ? args[0] : from
-let online = [...Object.keys(tiringa.chats.get(ido).presences), tiringa.user.jid]
-tiringa.sendMessage(from, 'Lista de usuários online:\n' + online.map(v => '- @' + v.replace(/@.+/, '')).join`\n`, text, { quoted: mek,
+let online = [...Object.keys(client.chats.get(ido).presences), client.user.jid]
+client.sendMessage(from, 'Lista de usuários online:\n' + online.map(v => '- @' + v.replace(/@.+/, '')).join`\n`, text, { quoted: mek,
 contextInfo: { mentionedJid: online }
 })
 break
@@ -1861,7 +1856,7 @@ break
 //_NEKOS PINTEREST
 case 'neko':
 msgFilter.isFiltered(from)
-tiringa.updatePresence(from, Presence.composing)
+client.updatePresence(from, Presence.composing)
 uk = ["anime neko"]
 nk = uk[Math.floor(Math.random() * uk.length)]
 try {
@@ -1872,7 +1867,7 @@ reply(ptbr.wait())
 n = JSON.parse(JSON.stringify(data));
 nimek = n[Math.floor(Math.random() * n.length)];
 pok = await getBuffer(nimek)
-tiringa.sendMessage(from, pok, image, {
+client.sendMessage(from, pok, image, {
 quoted: mek, caption: `nyan`
 })
 } catch {
@@ -1883,7 +1878,7 @@ break
 //_LOLIS PINTEREST
 case 'loli':
 msgFilter.isFiltered(from)
-tiringa.updatePresence(from, Presence.composing)
+client.updatePresence(from, Presence.composing)
 uk = ["anime loli"]
 nk = uk[Math.floor(Math.random() * uk.length)]
 try {
@@ -1894,7 +1889,7 @@ reply(ptbr.wait())
 n = JSON.parse(JSON.stringify(data));
 nimek = n[Math.floor(Math.random() * n.length)];
 pok = await getBuffer(nimek)
-tiringa.sendMessage(from, pok, image, {
+client.sendMessage(from, pok, image, {
 quoted: mek, caption: `nii?`
 })
 } catch {
@@ -1906,7 +1901,7 @@ break
 case 'shitpost':
 case 'shit':
 msgFilter.isFiltered(from)
-tiringa.updatePresence(from, Presence.composing)
+client.updatePresence(from, Presence.composing)
 uk = ["shitpost br"]
 nk = uk[Math.floor(Math.random() * uk.length)]
 try {
@@ -1917,7 +1912,7 @@ reply(ptbr.wait())
 n = JSON.parse(JSON.stringify(data));
 nimek = n[Math.floor(Math.random() * n.length)];
 pok = await getBuffer(nimek)
-tiringa.sendMessage(from, pok, image, {
+client.sendMessage(from, pok, image, {
 quoted: mek, caption: `إذا قمت بترجمة هذا فأنت سارق🤣👆`
 })
 } catch {
@@ -1928,7 +1923,7 @@ break
 //_ANIME PINTEREST
 case 'anime':
 msgFilter.isFiltered(from)
-tiringa.updatePresence(from, Presence.composing)
+client.updatePresence(from, Presence.composing)
 am = ["anime tumblr",
 "wallpaper anime hd",
 "anime aestethic",
@@ -1941,7 +1936,7 @@ reply(ptbr.wait())
 n = JSON.parse(JSON.stringify(data));
 nimek = n[Math.floor(Math.random() * n.length)];
 pok = await getBuffer(nimek)
-tiringa.sendMessage(from, pok, image, {
+client.sendMessage(from, pok, image, {
 quoted: mek, caption: `💮`
 })
 break
@@ -1950,7 +1945,7 @@ break
 case 'wp':
 case 'wallpaper':
 msgFilter.isFiltered(from)
-tiringa.updatePresence(from, Presence.composing)
+client.updatePresence(from, Presence.composing)
 pw = ["wallpaper aestethic",
 "wallpaper tumblr",
 "wallpaper lucu",
@@ -1964,7 +1959,7 @@ reply(ptbr.wait())
 n = JSON.parse(JSON.stringify(data));
 nimek = n[Math.floor(Math.random() * n.length)];
 pok = await getBuffer(nimek)
-tiringa.sendMessage(from, pok, image, {
+client.sendMessage(from, pok, image, {
 quoted: mek, caption: `Gostou do que escolhi?`
 })
 } catch {
@@ -1975,7 +1970,7 @@ break
 case 'nomeninja':
 msgFilter.isFiltered(from)
   if (args.length < 1) return reply('escreva seu nome')
-tiringa.updatePresence(from, Presence.composing)
+client.updatePresence(from, Presence.composing)
 nome = body.slice(10)
 try {
 data = await fetchJson(`https://api.terhambar.com/ninja?nama=${nome}`)
@@ -2028,8 +2023,8 @@ if (!isGroup) return reply(ptbr.group())
 if (!isGroupAdmins) return reply(ptbr.admin())
 if (!isBotGroupAdmins) return reply(ptbr.Badmin())
 const ftgp = isQuotedImage ? JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo: mek
-const medipp = await tiringa.downloadAndSaveMediaMessage(ftgp)
-await tiringa.updateProfilePicture (from, medipp)
+const medipp = await client.downloadAndSaveMediaMessage(ftgp)
+await client.updateProfilePicture (from, medipp)
 reply('✅foto do grupo alterada✅')
 break
 
@@ -2040,7 +2035,7 @@ var imgbb = require('imgbb-uploader')
 if ((isMedia && !mek.message.videoMessage || isQuotedImage) && args.length == 0) {
 ger = isQuotedImage ? JSON.parse(JSON.stringify(mek).replace('quotedM','m')).message.extendedTextMessage.contextInfo : mek
 reply(ptbr.waitimg())
-owgi = await tiringa.downloadAndSaveMediaMessage(ger)
+owgi = await client.downloadAndSaveMediaMessage(ger)
 anu = await imgbb("0c419be2e8bfc27eff00147b0c763418", owgi)
 imgtrg = `${anu.display_url}`
 ranp = getRandom('.gif')
@@ -2050,7 +2045,7 @@ exec(`wget ${anu1} -O ${ranp} && ffmpeg -i ${ranp} -vcodec libwebp -filter:v fps
 fs.unlinkSync(ranp)
 if (err) return reply(ptbr.stick())
 nobg = fs.readFileSync(rano)
-tiringa.sendMessage(from, nobg, sticker, {quoted: mek})
+client.sendMessage(from, nobg, sticker, {quoted: mek})
 fs.unlinkSync(rano)
 })                               
 } else {
@@ -2063,7 +2058,7 @@ var imgbb = require('imgbb-uploader')
 if ((isMedia && !mek.message.videoMessage || isQuotedImage) && args.length == 0) {
 ger = isQuotedImage ? JSON.parse(JSON.stringify(mek).replace('quotedM','m')).message.extendedTextMessage.contextInfo : mek
 reply(ptbr.wait())
-owgi = await tiringa.downloadAndSaveMediaMessage(ger)
+owgi = await client.downloadAndSaveMediaMessage(ger)
 anu = await imgbb("0c419be2e8bfc27eff00147b0c763418", owgi)
 imurl = `${anu.display_url}`
 reply(imurl)
@@ -2075,11 +2070,11 @@ var imgbb = require('imgbb-uploader')
 if ((isMedia && !mek.message.videoMessage || isQuotedImage) && args.length == 0) {
 ger = isQuotedImage ? JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo: mek
 reply(ptbr.waitimg())
-owgi = await tiringa.downloadAndSaveMediaMessage(ger)
+owgi = await client.downloadAndSaveMediaMessage(ger)
 anu = await imgbb("0c419be2e8bfc27eff00147b0c763418", owgi)
 imgwas = `${anu.display_url}`
 hehe = await getBuffer(`https://some-random-api.ml/canvas/wasted?avatar=${imgwas}`)
-tiringa.sendMessage(from, hehe, image, {quoted:mek})
+client.sendMessage(from, hehe, image, {quoted:mek})
 } else {
 reply('Você precisa marcar ou enviar uma imagem')
 }
@@ -2090,11 +2085,11 @@ var imgbb = require('imgbb-uploader')
 if ((isMedia && !mek.message.videoMessage || isQuotedImage) && args.length == 0) {
 ted = isQuotedImage ? JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo: mek
 reply(ptbr.waitimg())
-owgi = await tiringa.downloadAndSaveMediaMessage(ted)
+owgi = await client.downloadAndSaveMediaMessage(ted)
 tels = body.slice(7)
 anu = await imgbb("0c419be2e8bfc27eff00147b0c763418", owgi)
 hehe = await getBuffer(`https://videfikri.com/api/textmaker/pencil/?urlgbr=${anu.display_url}`)
-tiringa.sendMessage(from, hehe, image, {quoted:mek})
+client.sendMessage(from, hehe, image, {quoted:mek})
 } else {
 reply('Você precisa marcar ou enviar uma imagem')
 }
@@ -2107,10 +2102,10 @@ ted = isQuotedImage ? JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).me
 if (args.length < 1) return reply(`Digite algum texto para isso`)
 wtext = body.slice(7)
 reply(ptbr.waitimg())
-owgi = await tiringa.downloadAndSaveMediaMessage(ted)
+owgi = await client.downloadAndSaveMediaMessage(ted)
 anu = await imgbb("0c419be2e8bfc27eff00147b0c763418", owgi)
 hehe = await getBuffer(`https://videfikri.com/api/textmaker/wanted/?urlgbr=${anu.display_url}&text1=${wtext}&text2=10000`)
-tiringa.sendMessage(from, hehe, image, {quoted:mek})
+client.sendMessage(from, hehe, image, {quoted:mek})
 } else {
 reply('Você precisa marcar ou enviar uma imagem')
 }
@@ -2124,7 +2119,7 @@ pc = body.slice(5)
 tx1 = pc.split("|")[0];
 tx2 = pc.split("|")[1];
 hehe = await getBuffer(`https://videfikri.com/api/textmaker/8bit/?text1=${tx1}&text2=${tx2}`)
-tiringa.sendMessage(from, hehe, image, {quoted:mek})
+client.sendMessage(from, hehe, image, {quoted:mek})
 break
 
 case 'bneon':
@@ -2133,7 +2128,7 @@ if (args.length < 1) return reply('digite algum texto para isso')
 pc = body.slice(6)
 reply(ptbr.waitimg())
 hehe = await getBuffer(`https://api.zeks.xyz/api/bneon?apikey=apivinz&text=${pc}`)
-tiringa.sendMessage(from, hehe, image, {quoted:mek})
+client.sendMessage(from, hehe, image, {quoted:mek})
 break
 		
 case 'luzneon':
@@ -2142,7 +2137,7 @@ if (args.length < 1) return reply('digite algum texto para isso')
 pc = body.slice(8)
 reply(ptbr.waitimg())
 hehe = await getBuffer(`https://docs-jojo.herokuapp.com/api/neon_light?text=${pc}`)
-tiringa.sendMessage(from, hehe, image, {quoted:mek})
+client.sendMessage(from, hehe, image, {quoted:mek})
 break
 
 case 'matrix':
@@ -2151,7 +2146,7 @@ if (args.length < 1) return reply('digite algum texto para isso')
 pc = body.slice(7)
 reply(ptbr.waitimg())
 hehe = await getBuffer(`https://api.zeks.xyz/api/matrix?apikey=apivinz&text=${pc}`)
-tiringa.sendMessage(from, hehe, image, {quoted:mek})
+client.sendMessage(from, hehe, image, {quoted:mek})
 break
 
 case 'breakwall':
@@ -2160,7 +2155,7 @@ if (args.length < 1) return reply('digite algum texto para isso')
 pc = body.slice(10)
 reply(ptbr.waitimg())
 hehe = await getBuffer(`https://api.zeks.xyz/api/breakwall?apikey=apivinz&text=${pc}`)
-tiringa.sendMessage(from, hehe, image, {quoted:mek})
+client.sendMessage(from, hehe, image, {quoted:mek})
 break
 
 case 'dropwater':
@@ -2168,7 +2163,7 @@ if (args.length < 1) return reply('digite algum texto para isso')
 pc = body.slice(10)
 reply(ptbr.waitimg())
 hehe = await getBuffer(`https://api.zeks.xyz/api/dropwater?apikey=apivinz&text=${pc}`)
-tiringa.sendMessage(from, hehe, image, {quoted:mek})
+client.sendMessage(from, hehe, image, {quoted:mek})
 break
 
 case 'wolflogo':
@@ -2179,7 +2174,7 @@ tx1 = pc.split("|")[0];
 tx2 = pc.split("|")[1];
 reply(ptbr.waitimg())
 hehe = await getBuffer(`https://api.zeks.xyz/api/wolflogo?apikey=apivinz&text1=${tx1}&text2=${tx2}`)
-tiringa.sendMessage(from, hehe, image, {quoted:mek})
+client.sendMessage(from, hehe, image, {quoted:mek})
 break
 		
 ///_photoOXY
@@ -2189,7 +2184,7 @@ pc = body.slice(11)
 reply(ptbr.waitimg())
 hehe = fetchJson(`https://api.zeks.xyz/api/flowertext?text=${pc}&apikey=apivinz`)
 heh = await getBuffer(hehe.result)
-tiringa.sendMessage(from, heh, image, {quoted:mek})
+client.sendMessage(from, heh, image, {quoted:mek})
 break
 ///_photoOXY
 
@@ -2198,7 +2193,7 @@ if (args.length < 1) return reply('digite algum texto para isso')
 pc = body.slice(10)
 reply(ptbr.waitimg())
 hehe = await getBuffer(`https://videfikri.com/api/textmaker/lovemek/?text=${pc}`)
-tiringa.sendMessage(from, hehe, image, {quoted:mek})
+client.sendMessage(from, hehe, image, {quoted:mek})
 break
 
 case 'tfire':
@@ -2206,7 +2201,7 @@ if (args.length < 1) return reply('digite algum texto para isso')
 pc = body.slice(6)
 reply(ptbr.waitimg())
 hehe = await getBuffer(`https://api.zeks.xyz/api/tfire?text=${pc}&apikey=apivinz`)
-tiringa.sendMessage(from, hehe, image, {quoted:mek})
+client.sendMessage(from, hehe, image, {quoted:mek})
 break
 
 case 'sandw':
@@ -2214,7 +2209,7 @@ if (args.length < 1) return reply('digite algum texto para isso')
 pc = body.slice(6)
 reply(ptbr.waitimg())
 hehe = await getBuffer(`https://api.zeks.xyz/api/sandw?apikey=apivinz&text=${pc}`)
-tiringa.sendMessage(from, hehe, image, {quoted:mek})
+client.sendMessage(from, hehe, image, {quoted:mek})
 break
 
 case 'firofiro':
@@ -2222,7 +2217,7 @@ if (args.length < 1) return reply('digite algum texto para isso')
 pc = body.slice(9)
 reply(ptbr.waitimg())
 hehe = await getBuffer(`https://api.zeks.xyz/api/epep?text=${pc}&apikey=apivinz`)
-tiringa.sendMessage(from, hehe, image, {quoted:mek})
+client.sendMessage(from, hehe, image, {quoted:mek})
 break
 
 case 'text3d2':
@@ -2230,7 +2225,7 @@ if (args.length < 1) return reply('digite algum texto para isso')
 pc = body.slice(8)
 reply(ptbr.waitimg())
 hehe = await getBuffer(`https://api.zeks.xyz/api/text3dbox?apikey=apivinz&text=${pc}`)
-tiringa.sendMessage(from, hehe, image, {quoted:mek})
+client.sendMessage(from, hehe, image, {quoted:mek})
 break
 
 case 'text3d':
@@ -2238,7 +2233,7 @@ if (args.length < 1) return reply('digite algum texto para isso')
 pc = body.slice(7)
 reply(ptbr.waitimg())
 hehe = await getBuffer(`https://api.zeks.xyz/api/text3d?text=${pc}&apikey=apivinz`)
-tiringa.sendMessage(from, hehe, image, {quoted:mek})
+client.sendMessage(from, hehe, image, {quoted:mek})
 break
 
 case 'phlogo':
@@ -2249,7 +2244,7 @@ tx1 = pc.split("|")[0];
 tx2 = pc.split("|")[1];
 reply(ptbr.waitimg())
 hehe = await getBuffer(`https://api.zeks.xyz/api/phlogo?text1=${tx1}&text2=${tx2}&apikey=apivinz`)
-tiringa.sendMessage(from, hehe, image, {quoted:mek})
+client.sendMessage(from, hehe, image, {quoted:mek})
 break
 
 case 'bpmek':
@@ -2257,7 +2252,7 @@ if (args.length < 1) return reply('digite algum texto para isso')
 pc = body.slice(6)
 reply(ptbr.waitimg())
 hehe = await getBuffer(`https://api.zeks.xyz/api/logobp?text=${pc}&apikey=apivinz`)
-tiringa.sendMessage(from, hehe, image, {quoted:mek})
+client.sendMessage(from, hehe, image, {quoted:mek})
 break
 
 case 'folhas':
@@ -2265,7 +2260,7 @@ if (args.length < 1) return reply('digite algum texto para isso')
 pc = body.slice(7)
 reply(ptbr.waitimg())
 hehe = await getBuffer(`https://api.zeks.xyz/api/leavest?text=${pc}&apikey=apivinz`)
-tiringa.sendMessage(from, hehe, image, {quoted:mek})
+client.sendMessage(from, hehe, image, {quoted:mek})
 break
 
 case 'tlight':
@@ -2273,7 +2268,7 @@ if (args.length < 1) return reply('digite algum texto para isso')
 pc = body.slice(7)
 reply(ptbr.waitimg())
 hehe = await getBuffer(`https://api.zeks.xyz/api/tlight?text=${pc}&apikey=apivinz`)
-tiringa.sendMessage(from, hehe, image, {quoted:mek})
+client.sendMessage(from, hehe, image, {quoted:mek})
 break
 
 
@@ -2282,7 +2277,7 @@ if (args.length < 1) return reply('digite algum texto para isso')
 pc = body.slice(14)
 reply(ptbr.waitimg())
 hehe = await getBuffer(`https://videfikri.com/api/textmaker/narutobanner/?text=${pc}`)
-tiringa.sendMessage(from, hehe, image, {quoted:mek})
+client.sendMessage(from, hehe, image, {quoted:mek})
 break
 
 case 'romancetext':
@@ -2290,7 +2285,7 @@ if (args.length < 1) return reply('digite algum texto para isso')
 pc = body.slice(12)
 reply(ptbr.waitimg())
 hehe = await getBuffer(`https://videfikri.com/api/textmaker/romancetext/?text=${pc}`)
-tiringa.sendMessage(from, hehe, image, {quoted:mek})
+client.sendMessage(from, hehe, image, {quoted:mek})
 break
 
 case 'shadowtext':
@@ -2298,7 +2293,7 @@ if (args.length < 1) return reply('digite algum texto para isso')
 pc = body.slice(11)
 reply(ptbr.waitimg())
 hehe = await getBuffer(`https://videfikri.com/api/textmaker/shadowtext/?text=${pc}`)
-tiringa.sendMessage(from, hehe, image, {quoted:mek})
+client.sendMessage(from, hehe, image, {quoted:mek})
 break
 
 case 'tiktokeffect':
@@ -2311,7 +2306,7 @@ if (nomor.length >= 9 ) return reply(`Texto 1 máximo 9 carateres`)
 if (pesan.length >= 35 ) return reply(`Texto 2 máximo 35 carateres`)
 reply(ptbr.waitimg())
 hehe = await getBuffer(`https://videfikri.com/api/textmaker/tiktokeffect/?text1=${nomor}&text2=${pesan}`)
-tiringa.sendMessage(from, hehe, image, {quoted:mek})
+client.sendMessage(from, hehe, image, {quoted:mek})
 break
 
 case 'neon':
@@ -2320,7 +2315,7 @@ pc = body.slice(5)
 if (pc.length >= 80 ) return reply(`Máximo 80 carateres`)
 reply(ptbr.waitimg())
 hehe = await getBuffer(`https://videfikri.com/api/textmaker/glowingneon/?text=${pc}`)
-tiringa.sendMessage(from, hehe, image, {quoted:mek})
+client.sendMessage(from, hehe, image, {quoted:mek})
 break
 
 case 'hpotter':
@@ -2328,7 +2323,7 @@ if (args.length < 1) return reply('digite algum texto para isso')
 pc = body.slice(8)
 reply(ptbr.waitimg())
 hehe = await getBuffer(`https://videfikri.com/api/textmaker/hpotter/?text=${pc}`)
-tiringa.sendMessage(from, hehe, image, {quoted:mek})
+client.sendMessage(from, hehe, image, {quoted:mek})
 break
 
 case 'cep':
@@ -2341,7 +2336,7 @@ ccg =
   ‣ Cep: ${hehe.cep}
   ‣ Estado: ${hehe.state}
   ‣ Cidade: ${hehe.city}`
-tiringa.sendMessage(from, ccg, text, {quoted:mek})
+client.sendMessage(from, ccg, text, {quoted:mek})
 break
 
 case 'ddd':
@@ -2354,7 +2349,7 @@ ccg =
   ‣ Estado: ${hehe.state}
   ‣ Cidades: 
     ${hehe.cities}\n`
-tiringa.sendMessage(from, ccg, text, {quoted:mek})
+client.sendMessage(from, ccg, text, {quoted:mek})
 break
 
 case 'cartão':
@@ -2369,7 +2364,7 @@ ccg =
    ‣ Pin: ${hehe.result.card.pin}
    ‣ Balanço: ${hehe.result.card.balance}
    ‣ Validade: ${hehe.result.card.expiration_month}/${hehe.result.card.expiration_year}`
-tiringa.sendMessage(from, ccg, text, {quoted:mek})
+client.sendMessage(from, ccg, text, {quoted:mek})
 break
 
 case 'neve':
@@ -2382,7 +2377,7 @@ pc = body.slice(5)
 reply(ptbr.waitimg())
 haha = await fetchJson(`https://api.zeks.xyz/api/snowwrite?text1=${tx1}&text2=${tx2}&apikey=apivinz`)
 hehe = await getBuffer(haha.result)
-tiringa.sendMessage(from, hehe, image, {quoted:mek})
+client.sendMessage(from, hehe, image, {quoted:mek})
 } catch (e) {
 console.log(`Error :`, color(e,'red'))
 reply('❌ocorreu um erro❌')
@@ -2396,7 +2391,7 @@ pc = body.slice(8)
 reply(ptbr.waitimg())
 haha = await fetchJson(`https://api.zeks.xyz/api/crismes?text=${pc}&apikey=apivinz`)
 hehe = await getBuffer(haha.result)
-tiringa.sendMessage(from, hehe, image, {quoted:mek})
+client.sendMessage(from, hehe, image, {quoted:mek})
 } catch (e) {
 console.log(`Error :`, color(e,'red'))
 reply('❌ocorreu um erro❌')
@@ -2412,7 +2407,7 @@ tx2 = pc.split("|")[1];
 reply(ptbr.waitimg())
 haha = await fetchJson(`https://api.zeks.xyz/api/pubglogo?text1=${tx1}&text2=${tx2}&apikey=apivinz`)
 hehe = await getBuffer(haha.result)
-tiringa.sendMessage(from, hehe, image, {quoted:mek})
+client.sendMessage(from, hehe, image, {quoted:mek})
 } catch (e) {
 console.log(`Error :`, color(e,'red'))
 reply('❌ocorreu um erro❌')
@@ -2427,7 +2422,7 @@ tx1 = pc.split("|")[0];
 tx2 = pc.split("|")[1];
 reply(ptbr.waitimg())
 haha = await getBuffer(`https://videfikri.com/api/textmaker/bf4/?text1=${tx1}&text2=${tx2}`)
-tiringa.sendMessage(from, hehe, image, {quoted:mek})
+client.sendMessage(from, hehe, image, {quoted:mek})
 } catch (e) {
 console.log(`Error :`, color(e,'red'))
 reply('❌ocorreu um erro❌')
@@ -2439,7 +2434,7 @@ msgFilter.isFiltered(from)
 try {
 hah = await fetchJson(`https://kagchi-api.glitch.me//waifu/nezuko`)
 hehe = await getBuffer(hah.url)
-tiringa.sendMessage(from, hehe, image, {quoted:mek})
+client.sendMessage(from, hehe, image, {quoted:mek})
 } catch (e) {
 console.log(`Error :`, color(e,'red'))
 reply('❌ocorreu um erro❌')
@@ -2453,7 +2448,7 @@ pc = body.slice(6)
 reply(ptbr.waitimg())
 haha = await fetchJson(`https://api.zeks.xyz/api/cslogo?text=${pc}&apikey=apivinz`)
 hehe = await getBuffer(haha.result)
-tiringa.sendMessage(from, hehe, image, {quoted:mek})
+client.sendMessage(from, hehe, image, {quoted:mek})
 } catch (e) {
 console.log(`Error :`, color(e,'red'))
 reply('❌ocorreu um erro❌')
@@ -2467,7 +2462,7 @@ pc = body.slice(10)
 reply(ptbr.waitimg())
 haha = await fetchJson(`https://api.zeks.xyz/api/lithgtext?text=${pc}&apikey=apivinz`)
 hehe = await getBuffer(haha.result)
-tiringa.sendMessage(from, hehe, image, {quoted:mek})
+client.sendMessage(from, hehe, image, {quoted:mek})
 } catch (e) {
 console.log(`Error :`, color(e,'red'))
 reply('❌ocorreu um erro❌')
@@ -2481,7 +2476,7 @@ pc = body.slice(9)
 reply(ptbr.waitimg())
 haha = await fetchJson(`https://api.zeks.xyz/api/silktext?text=${pc}&apikey=apivinz`)
 hehe = await getBuffer(haha.result)
-tiringa.sendMessage(from, hehe, image, {quoted:mek})
+client.sendMessage(from, hehe, image, {quoted:mek})
 } catch (e) {
 console.log(`Error :`, color(e,'red'))
 reply('❌ocorreu um erro❌')
@@ -2495,7 +2490,7 @@ pc = body.slice(10)
 reply(ptbr.waitimg())
 haha = await fetchJson(`https://api.zeks.xyz/api/flametext?text=${pc}&apikey=apivinz`)
 hehe = await getBuffer(haha.result)
-tiringa.sendMessage(from, hehe, image, {quoted:mek})
+client.sendMessage(from, hehe, image, {quoted:mek})
 } catch (e) {
 console.log(`Error :`, color(e,'red'))
 reply('❌ocorreu um erro❌')
@@ -2508,7 +2503,7 @@ pc = body.slice(9)
 reply(ptbr.waitimg())
 haha = await fetchJson(`https://api.zeks.xyz/api/glowtext?text=${pc}&apikey=apivinz`)
 hehe = await getBuffer(haha.result)
-tiringa.sendMessage(from, hehe, image, {quoted:mek})
+client.sendMessage(from, hehe, image, {quoted:mek})
 break
 
 case 'crosslogo':
@@ -2519,7 +2514,7 @@ reply(ptbr.waitimg())
 haha = await fetchJson(`https://api.zeks.xyz/api/crosslogo?text=${pc}&apikey=apivinz`)
 hehe = await getBuffer(haha.result)
 setTimeout( () => {
-tiringa.sendMessage(from, hehe, image, {quoted:mek})
+client.sendMessage(from, hehe, image, {quoted:mek})
 }, 10000)
 } catch (e) {
 console.log(`Error :`, color(e,'red'))
@@ -2532,11 +2527,11 @@ var imgbb = require('imgbb-uploader')
 if ((isMedia && !mek.message.videoMessage || isQuotedImage) && args.length == 0) {
 ted = isQuotedImage ? JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo: mek
 reply(ptbr.wait())
-owgi = await tiringa.downloadAndSaveMediaMessage(ted)
+owgi = await client.downloadAndSaveMediaMessage(ted)
 tels = body.slice(7)
 anu = await imgbb("0c419be2e8bfc27eff00147b0c763418", owgi)
 hehe = await getBuffer(`https://videfikri.com/api/textmaker/gtavposter/?urlgbr=${anu.display_url}`)
-tiringa.sendMessage(from, hehe, image, {quoted:mek})
+client.sendMessage(from, hehe, image, {quoted:mek})
 } else {
 reply('Você precisa marcar ou enviar uma imagem')
 }
@@ -2544,25 +2539,25 @@ break
 
 case 'wa.me':
 case 'wame':
-tiringa.updatePresence(from, Presence.composing)
+client.updatePresence(from, Presence.composing)
 options = {
 text: `Seu link wa.me: wa.me/${sender.split("@s.whatsapp.net")[0]}\nOu: \napi.whatsapp.com/send?phone=${sender.split("@")[0]}`,
 contextInfo: {
 mentionedJid: [sender]
 }
 }
-tiringa.sendMessage(from, options, text, {
+client.sendMessage(from, options, text, {
 quoted: mek
 })
 break
 
 case 'notif':
 if (!isGroupAdmins) return reply(ptbr.admin())
-tiringa.updatePresence(from, Presence.composing)
+client.updatePresence(from, Presence.composing)
 if (!isGroup) return reply(ptbr.group())
-if(args.length < 1) return tiringa.reply('escreva algo como aviso')
+if(args.length < 1) return client.reply('escreva algo como aviso')
 aviso  = `Aviso de: @${sender.split("@")[0]}\n\nAviso: ${body.slice(7)}`
-group = await tiringa.groupMetadata(from);
+group = await client.groupMetadata(from);
 member = group['participants']
 jids = [];
 member.map(async adm => {
@@ -2575,17 +2570,17 @@ mentionedJid: jids
 },
 quoted: mek
 }
-await tiringa.sendMessage(from, options, text)
+await client.sendMessage(from, options, text)
 break
 
 //_TE MENCIONA
 case 'tagme':
 const tagme = {
-text: `@${sender.split("@")[0]} 🧙‍♂️`,
+text: `@${sender.split("@")[0]} Noah-bot`,
 contextInfo: {mentionedJid: [sender]
 }
 }
-tiringa.sendMessage(from, tagme, text)
+client.sendMessage(from, tagme, text)
 break
 
 case 'play':
@@ -2595,7 +2590,7 @@ play = body.slice(5)
 reply('Procurando sua música...⏳')
 anu = await fetchJson(`https://api.zeks.xyz/api/ytplaymp4?apikey=apivinz&q=${play}`)
 if (anu.message) return reply('Música não encontrada...\nTente específicar o nome dela.')
-//aanu = await fetchJson(`https://api-tiringa.italuh.repl.co/api/yta?url=${anu.result.source}`)
+//aanu = await fetchJson(`https://api-client.italuh.repl.co/api/yta?url=${anu.result.source}`)
 aanu = await fetchJson(`https://api-exteam.herokuapp.com/api/yt/playmp3?query=${play}&apikey=estreia`)
 infomp3 = 
 `    MÚSICA ENCONTRADA
@@ -2605,10 +2600,10 @@ buffer = await getBuffer(anu.result.thumbnail)
 //lagu = await getBuffer(anu.result.url_audio)
 lagu = await getBuffer(aanu.url)
 setTimeout( () => {
-tiringa.sendMessage(from, buffer, image, {quoted: mek, caption: infomp3})
+client.sendMessage(from, buffer, image, {quoted: mek, caption: infomp3})
 }, 1500)
 reply('Baixando e enviando sua música...')
-tiringa.sendMessage(from, lagu, audio, {mimetype: 'audio/mp4', quoted: mek})
+client.sendMessage(from, lagu, audio, {mimetype: 'audio/mp4', quoted: mek})
 break
 
 case 'ytsearch':
@@ -2629,7 +2624,7 @@ infomp3 =
 `
 buffer = await getBuffer(anu.result.thumbnail)
 lagu = await getBuffer(anu.result.url)
-tiringa.sendMessage(from, buffer, image, {
+client.sendMessage(from, buffer, image, {
 quoted: mek, caption: infomp3
 })
 } catch {
@@ -2649,7 +2644,7 @@ dadosf =
    ‣ E-mail: ${anu.email}
    ‣ Senha: ${anu.password}
    ‣ CEP: ${anu.zip_code}`
-tiringa.sendMessage(from, dadosf, text, {quoted: mek})
+client.sendMessage(from, dadosf, text, {quoted: mek})
 break
 
 case 'ytmp3':
@@ -2658,14 +2653,14 @@ reply(ptbr.wait())
 play = body.slice(7)
 if(!isUrl(args[0]) && !args[0].includes('youtu')) return reply('Esse link não é do YouTube')
 try {
-anu = await fetchJson(`https://api-tiringa.italuh.repl.co/api/yta?url=${play}`)
+anu = await fetchJson(`https://api-client.italuh.repl.co/api/yta?url=${play}`)
 infomp3 = `INFORMAÇÕES DO ÁUDIO\n‣ Título: ${anu.result.title}\n‣ Fonte: ${anu.result.source}\n‣ Tamanho: ${anu.result.size}\nlink: ${anu.result.link}`
 buffer = await getBuffer(anu.result.thumb)
 lagu = await getBuffer(anu.result.link)
-tiringa.sendMessage(from, buffer, image, {
+client.sendMessage(from, buffer, image, {
 quoted: mek, caption: infomp3
 })
-tiringa.sendMessage(from, lagu, audio, {
+client.sendMessage(from, lagu, audio, {
 mimetype: 'audio/mp4', filename: `${anu.result.title}.mp3`, quoted: mek
 })
 } catch {
@@ -2684,10 +2679,10 @@ if (anu.error) return reply(anu.error)
 infomp3 = `INFORMAÇÕES DO VÍDEO\n‣ Título: ${anu.result.title}\n‣ Fonte: ${anu.result.source}\n‣ Tamanho: ${anu.result.size}\nlink: ${anu.result.url_video}`
 buffer = await getBuffer(anu.result.thumbnail)
 lagu = await getBuffer(anu.result.url_video)
-tiringa.sendMessage(from, buffer, image, {
+client.sendMessage(from, buffer, image, {
 quoted: mek, caption: infomp3
 })
-tiringa.sendMessage(from, lagu, video, {
+client.sendMessage(from, lagu, video, {
 mimetype: 'video/mp4', filename: `${anu.result.title}.mp4`, quoted: mek
 }) 
 } catch {
@@ -2699,7 +2694,7 @@ break
 case 'ocr':
 if ((isMedia && !mek.message.videoMessage || isQuotedImage) && args.length == 0) {
 const ocrt = isQuotedImage ? JSON.parse(JSON.stringify(mek).replace('quotedM','m')).message.extendedTextMessage.contextInfo : mek
-const com = await tiringa.downloadAndSaveMediaMessage(ocrt)
+const com = await client.downloadAndSaveMediaMessage(ocrt)
 reply(ptbr.wait())
 await recognize(com, {lang: 'eng+ind', oem: 1, psm: 3})
 .then(oc => {
@@ -2730,7 +2725,7 @@ case 'figu':
 				case 'f':
 					if ((isMedia && !mek.message.videoMessage || isQuotedImage) && args.length == 0) {
 						const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(mek).replace('quotedM','m')).message.extendedTextMessage.contextInfo : mek
-						const media = await tiringa.downloadAndSaveMediaMessage(encmedia)
+						const media = await client.downloadAndSaveMediaMessage(encmedia)
 						ran = getRandom('.webp')
 						await ffmpeg(`./${media}`)
 							.input(media)
@@ -2744,7 +2739,7 @@ case 'figu':
 							})
 							.on('end', function () {
 								console.log('Finish')
-								tiringa.sendMessage(from, fs.readFileSync(ran), sticker, {quoted: mek})
+								client.sendMessage(from, fs.readFileSync(ran), sticker, {quoted: mek})
 								fs.unlinkSync(media)
 								fs.unlinkSync(ran)
 							})
@@ -2753,7 +2748,7 @@ case 'figu':
 							.save(ran)
 					} else if ((isMedia && mek.message.videoMessage.seconds < 11 || isQuotedVideo && mek.message.extendedTextMessage.contextInfo.quotedMessage.videoMessage.seconds < 11) && args.length == 0) {
 						const encmedia = isQuotedVideo ? JSON.parse(JSON.stringify(mek).replace('quotedM','m')).message.extendedTextMessage.contextInfo : mek
-						const media = await tiringa.downloadAndSaveMediaMessage(encmedia)
+						const media = await client.downloadAndSaveMediaMessage(encmedia)
 						ran = getRandom('.webp')
 						reply(mess.wait)
 						await ffmpeg(`./${media}`)
@@ -2769,7 +2764,7 @@ case 'figu':
 							})
 							.on('end', function () {
 								console.log('Finish')
-								tiringa.sendMessage(from, fs.readFileSync(ran), sticker, {quoted: mek})
+								client.sendMessage(from, fs.readFileSync(ran), sticker, {quoted: mek})
 								fs.unlinkSync(media)
 								fs.unlinkSync(ran)
 							})
@@ -2778,7 +2773,7 @@ case 'figu':
 							.save(ran)
 					} else if ((isMedia || isQuotedImage) && args[0] == 'nobg') {
 						const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(mek).replace('quotedM','m')).message.extendedTextMessage.contextInfo : mek
-						const media = await tiringa.downloadAndSaveMediaMessage(encmedia)
+						const media = await client.downloadAndSaveMediaMessage(encmedia)
 						ranw = getRandom('.webp')
 						ranp = getRandom('.png')
 						reply(mess.wait)
@@ -2792,12 +2787,12 @@ case 'figu':
 							exec(`ffmpeg -i ${ranp} -vcodec libwebp -filter:v fps=fps=20 -lossless 1 -loop 0 -preset default -an -vsync 0 -s 512:512 ${ranw}`, (err) => {
 								fs.unlinkSync(ranp)
 								if (err) return reply(mess.error.stick)
-								tiringa.sendMessage(from, fs.readFileSync(ranw), sticker, {quoted: mek})
+								client.sendMessage(from, fs.readFileSync(ranw), sticker, {quoted: mek})
 							})
 						})
 					/*} else if ((isMedia || isQuotedImage) && colors.includes(args[0])) {
 						const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(mek).replace('quotedM','m')).message.extendedTextMessage.contextInfo : mek
-						const media = await tiringa.downloadAndSaveMediaMessage(encmedia)
+						const media = await client.downloadAndSaveMediaMessage(encmedia)
 						ran = getRandom('.webp')
 						await ffmpeg(`./${media}`)
 							.on('start', function (cmd) {
@@ -2810,7 +2805,7 @@ case 'figu':
 							.on('end', function () {
 								console.log('Finish')
 								fs.unlinkSync(media)
-								tiringa.sendMessage(from, fs.readFileSync(ran), sticker, {quoted: mek})
+								client.sendMessage(from, fs.readFileSync(ran), sticker, {quoted: mek})
 								fs.unlinkSync(ran)
 							})
 							.addOutputOptions([`-vcodec`,`libwebp`,`-vf`,`scale='min(320,iw)':min'(320,ih)':force_original_aspect_ratio=decrease,fps=15, pad=320:320:-1:-1:color=${args[0]}@0.0, split [a][b]; [a] palettegen=reserve_transparent=off; [b][p] paletteuse`])
@@ -2824,7 +2819,7 @@ case 'figu':
 case 'st':
 if ((isMedia && !mek.message.videoMessage || isQuotedImage) && args.length == 0) {
 const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(mek).replace('quotedM','m')).message.extendedTextMessage.contextInfo : mek
-const media = await tiringa.downloadAndSaveMediaMessage(encmedia)                                     
+const media = await client.downloadAndSaveMediaMessage(encmedia)                                     
 rano = getRandom('.webp')
 await ffmpeg(`./${media}`)
 .input(media)
@@ -2833,7 +2828,7 @@ console.log(`Started : ${cmd}`)
 })
 .on('error', function (err) {
 console.log(`Error : ${err}`)
-exec(`webpmux -set exif ${addMetadata('Tiringa-BOT', 'Italu')} ${rano} -o ${rano}`, async (error) => {
+exec(`webpmux -set exif ${addMetadata('Noah-bot', 'Andre')} ${rano} -o ${rano}`, async (error) => {
 fs.unlinkSync(media)
 reply(ptbr.stick())
 })
@@ -2841,12 +2836,12 @@ reply(ptbr.stick())
 exec(`ffmpeg -i ${media} -vcodec libwebp -filter:v fps=fps=15 -lossless 1 -loop 0 -preset default -an -vsync 0 -s 800:800 ${rano}`, (err) => {
 fs.unlinkSync(media)
 buffer = fs.readFileSync(rano)
-tiringa.sendMessage(from, buffer, sticker, {quoted: mek})
+client.sendMessage(from, buffer, sticker, {quoted: mek})
 fs.unlinkSync(rano)
 })
 } else if ((isMedia && mek.message.videoMessage.seconds < 11 || isQuotedVideo && mek.message.extendedTextMessage.contextInfo.quotedMessage.videoMessage.seconds < 11) && args.length == 0) {
 const encmedia = isQuotedVideo ? JSON.parse(JSON.stringify(mek).replace('quotedM','m')).message.extendedTextMessage.contextInfo : mek
-const media = await tiringa.downloadAndSaveMediaMessage(encmedia)
+const media = await client.downloadAndSaveMediaMessage(encmedia)
 rano = getRandom('.webp')
 reply(ptbr.waitgif())
 await ffmpeg(`./${media}`)
@@ -2856,7 +2851,7 @@ console.log(`Started : ${cmd}`)
 })
 .on('error', function (err) {
 console.log(`Error : ${err}`)
-exec(`webpmux -set exif ${addMetadata('Tiringa-BOT', 'Italu')} ${rano} -o ${rano}`, async (error) => {
+exec(`webpmux -set exif ${addMetadata('Noah-bot','Andre')} ${rano} -o ${rano}`, async (error) => {
 fs.unlinkSync(media)
 tipe = media.endsWith('.mp4') ? 'video' : 'gif'
 reply(`Falha na conversão de ${tipe} para sticker`)
@@ -2865,7 +2860,7 @@ reply(`Falha na conversão de ${tipe} para sticker`)
 exec(`ffmpeg -i ${media} -vcodec libwebp -filter:v fps=fps=15 -lossless 1 -loop 0 -preset default -an -vsync 0 -s 200:200 ${rano}`, (err) => {
 fs.unlinkSync(media)
 buffer = fs.readFileSync(rano)
-tiringa.sendMessage(from, buffer, sticker, {quoted: mek})
+client.sendMessage(from, buffer, sticker, {quoted: mek})
 fs.unlinkSync(rano)
 })
 } else {
@@ -2875,18 +2870,18 @@ break
 
 //_CONVERTE VÍDEO EM ÁUDIO
 case 'tomp3':
-tiringa.updatePresence(from,
+client.updatePresence(from,
 Presence.composing)
 if (!isQuotedVideo) return reply(`Marque um vídeo com ${prefix}tomp3`)
 reply(ptbr.wait())
 mitri = JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo
-duh = await tiringa.downloadAndSaveMediaMessage(mitri)
+duh = await client.downloadAndSaveMediaMessage(mitri)
 ran = getRandom('.mp4')
 exec(`ffmpeg -i ${duh} ${ran}`, (err) => {
 fs.unlinkSync(duh)
 if (err) return reply('❌falha ao converter video para mp3❌')
 buffer = fs.readFileSync(ran)
-tiringa.sendMessage(from, buffer, audio, {
+client.sendMessage(from, buffer, audio, {
 mimetype: 'audio/mp4', quoted: mek
 })
 fs.unlinkSync(ran)
@@ -2895,15 +2890,15 @@ break
 
 //_VOZ DO GOOGLE
 case 'tts':
-if (args.length < 1) return tiringa.sendMessage(from, `Você deve usar o comando da forma correta:\n${prefix}tts (língua) (texto)\nExemplo: ${prefix}tts pt bom dia\n\nUse: ${prefix}ts para listar todas as línguas`, text, {quoted: mek})
+if (args.length < 1) return client.sendMessage(from, `Você deve usar o comando da forma correta:\n${prefix}tts (língua) (texto)\nExemplo: ${prefix}tts pt bom dia\n\nUse: ${prefix}ts para listar todas as línguas`, text, {quoted: mek})
 const gtts = require('./lib/gtts')(args[0])
-if (args.length < 2) return tiringa.sendMessage(from, 'Cadê o texto?', text, {quoted: mek})
+if (args.length < 2) return client.sendMessage(from, 'Cadê o texto?', text, {quoted: mek})
 dtt = body.slice(8)
 ranm = getRandom('.mp3')
 dtt.length > 800
 ? reply('Texto muito grande')
 : gtts.save(ranm, dtt, function() {
-tiringa.sendMessage(from, fs.readFileSync(ranm), audio, {quoted: mek, mimetype: 'audio/mp4', ptt:true})
+client.sendMessage(from, fs.readFileSync(ranm), audio, {quoted: mek, mimetype: 'audio/mp4', ptt:true})
 fs.unlinkSync(ranm)
 })
 break
@@ -2920,11 +2915,11 @@ break
 
 //_BLOQUEIA O USUÁRIO
 case 'block':
-tiringa.updatePresence(from, Presence.composing)
+client.updatePresence(from, Presence.composing)
 if (!isGroup) return reply(ptbr.group())
 if (!isOwner) return reply(ptbr.ownerB())
-tiringa.blockUser (`${body.slice(8)}@c.us`, "add")
-tiringa.sendMessage(from, `Memblokir nomor, Perintah Diterima`, text, {
+client.blockUser (`${body.slice(8)}@c.us`, "add")
+client.sendMessage(from, `Memblokir nomor, Perintah Diterima`, text, {
 quoted: mek
 })
 break
@@ -2933,14 +2928,14 @@ break
 case 'unblock':
 if (!isGroup) return reply(ptbr.group())
 if (!isOwner) return reply(ptbr.ownerB())
-tiringa.blockUser (`${body.slice(9)}@c.us`, "remove")
-tiringa.sendMessage(from, `Membuka blokir, Perintah diterima`, text)
+client.blockUser (`${body.slice(9)}@c.us`, "remove")
+client.sendMessage(from, `Membuka blokir, Perintah diterima`, text)
 break
 
 //_MENCIONA TODOS OS MEMBROS DO GRUPO
 case 'tagall':
 msgFilter.isFiltered(from)
-tiringa.updatePresence(from, Presence.composing)
+client.updatePresence(from, Presence.composing)
 //reply('comando desativado para evitar flood')
 if (!isGroup) return reply(ptbr.group())
 if (!isPremium) return reply('Você não é um usuário premium...')
@@ -2958,10 +2953,10 @@ break
 //_LIMPA TODOS OS CHATS
 case 'clearall':
 if (!isOwner) return reply('Só o Italu pode fazer isso')
-anu = await tiringa.chats.all()
-tiringa.setMaxListeners(25)
+anu = await client.chats.all()
+client.setMaxListeners(25)
 for (let _ of anu) {
-tiringa.deleteChat(_.jid)
+client.deleteChat(_.jid)
 }
 reply('todos os chats foram deletados :)')
 break
@@ -2979,10 +2974,10 @@ for (let _ of mentioned) {
 pro += `@${_.split('@')[0]}\n`
 }
 mentions(from, mentioned, true)
-tiringa.groupRemove(from, mentioned)
+client.groupRemove(from, mentioned)
 } else {
 mentions(`O usuário: @${mentioned[0].split('@')[0]} foi promovido para o cargo de administrador do grupo`, mentioned, true)
-tiringa.groupMakeAdmin(from, mentioned)
+client.groupMakeAdmin(from, mentioned)
 }
 break
 
@@ -2992,8 +2987,8 @@ if (!isGroup) return reply(ptbr.group())
 if (!isGroupAdmins) return reply(ptbr.admin())
 if (!isBotGroupAdmins) return reply(ptbr.Badmin())
 idgrup = `${from.split("@s.whatsapp.net")[0]}`;
-tiringa.groupUpdateSubject(idgrup, `${body.slice(9)}`)
-tiringa.sendMessage(from, 'nome do grupo alterado', text, {
+client.groupUpdateSubject(idgrup, `${body.slice(9)}`)
+client.sendMessage(from, 'nome do grupo alterado', text, {
 quoted: mek
 })
 break
@@ -3003,8 +2998,8 @@ case 'setdesk':
 if (!isGroup) return reply(ptbr.group())
 if (!isGroupAdmins) return reply(ptbr.admin())
 if (!isBotGroupAdmins) return reply(ptbr.Badmin())
-tiringa.groupUpdateDescription(from, `${body.slice(9)}`)
-tiringa.sendMessage(from, 'descrição do grupo alterada', text, {
+client.groupUpdateDescription(from, `${body.slice(9)}`)
+client.sendMessage(from, 'descrição do grupo alterada', text, {
 quoted: mek
 })
 break
@@ -3022,10 +3017,10 @@ for (let _ of mentioned) {
 reb += `@${_.split('@')[0]}\n`
 }
 mentions(reb, mentioned, true)
-tiringa.groupRemove(from, mentioned)
+client.groupRemove(from, mentioned)
 } else {
 mentions(`O usuário @${mentioned[0].split('@')[0]} foi rebaixado para membro comum`, mentioned, true)
-tiringa.groupDemoteAdmin(from, mentioned)
+client.groupDemoteAdmin(from, mentioned)
 }
 break
 
@@ -3045,11 +3040,11 @@ break
 
 //_ALTERA A FOTO DE PERFIL DO BOT
 case 'setppbot':
-tiringa.updatePresence(from, Presence.composing)
+client.updatePresence(from, Presence.composing)
 if (!isOwner) return reply(ptbr.ownerB())
 const botpp = isQuotedImage ? JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contxtInfo: mek
-const cuk = await tiringa.downloadAndSaveMediaMessage(botpp)
-await tiringa.updateProfilePicture(botNumber, cuk)
+const cuk = await client.downloadAndSaveMediaMessage(botpp)
+await client.updateProfilePicture(botNumber, cuk)
 reply('Obrigado pela nova foto de perfil')
 break
 
@@ -3059,7 +3054,7 @@ case 'linkgc':
 if (!isGroup) return reply(ptbr.group())
 if (!isGroupAdmins) return reply(ptbr.admin())
 if (!isBotGroupAdmins) return reply(ptbr.Badmin())
-linkgc = await tiringa.groupInviteCode(from)
+linkgc = await client.groupInviteCode(from)
 reply('Link do grupo: https://chat.whatsapp.com/'+linkgc)
 break
 
@@ -3067,7 +3062,7 @@ break
 case 'leave':
 if (!isGroup) return reply(ptbr.group())
 if (isGroupAdmins || isOwner) {
-tiringa.groupLeave(from)
+client.groupLeave(from)
 } else {
 reply(ptbr.admin())
 }
@@ -3075,11 +3070,11 @@ break
 
 //_MENCIONA TODOS OS MEMBROS DO GRUPO 
 case 'hidetag':
-tiringa.updatePresence(from, Presence.composing) 
+client.updatePresence(from, Presence.composing) 
 if (!isOwner) return reply(ptbr.ownerB())
 if (!isGroup) return reply(ptbr.group())
 htg = body.slice(9)
-group = await tiringa.groupMetadata(from);
+group = await client.groupMetadata(from);
 member = group['participants']
 jids = [];
 member.map( async adm => {
@@ -3090,22 +3085,22 @@ text: htg,
 contextInfo: {mentionedJid: jids},
 quoted: mek
 }
-await tiringa.sendMessage(from, options, text)
+await client.sendMessage(from, options, text)
 break
 
 //_CONVERTE STICKER EM IMAGEM
 case 'toimg':
-tiringa.updatePresence(from, Presence.composing)                       
+client.updatePresence(from, Presence.composing)                       
 if (!isQuotedSticker) return reply('Você precisa marcar um sticker não animado para isso')
 reply(ptbr.wait())
 tomg = JSON.parse(JSON.stringify(mek).replace('quotedM','m')).message.extendedTextMessage.contextInfo
-medtmg = await tiringa.downloadAndSaveMediaMessage(tomg)
+medtmg = await client.downloadAndSaveMediaMessage(tomg)
 ran = getRandom('.png')
 exec(`ffmpeg -i ${medtmg} ${ran}`, (err) => {
 fs.unlinkSync(medtmg)
 if (err) return reply('❌falha ao converter sticker em imagem❌')
 buffer = fs.readFileSync(ran)
-tiringa.sendMessage(from, buffer, image, {quoted: mek, caption: 'conversão sucedida'})
+client.sendMessage(from, buffer, image, {quoted: mek, caption: 'conversão sucedida'})
 fs.unlinkSync(ran)
 })
 break
@@ -3127,7 +3122,7 @@ if (umurUser > 40) return reply(`Idade máxima é 40 anos`)
 if (umurUser < 12) return reply(`Idade mínima é 12 anos`)
 veri = sender
 try {
-ppimg = await tiringa.getProfilePicture(`${sender.split('@')[0]}@s.whatsapp.net`)
+ppimg = await client.getProfilePicture(`${sender.split('@')[0]}@s.whatsapp.net`)
 } catch {
 ppimg = 'https://i.ibb.co/rxPtZS8/foto.jpg'
 }
@@ -3146,12 +3141,12 @@ captionnya =
 você se registrou, digite ${prefix}menu para listar meus comandos`
 daftarimg = await getBuffer(ppimg)
 addRegisteredUser(sender, namaUser, umurUser, time, serialUser)
-tiringa.sendMessage(from, daftarimg, image, {quoted: mek, caption: captionnya, contextInfo: {mentionedJid: [sender]}})                    
+client.sendMessage(from, daftarimg, image, {quoted: mek, caption: captionnya, contextInfo: {mentionedJid: [sender]}})                    
 break
 
 //_FECHA O GRUPO
 case 'fecharg':
-tiringa.updatePresence(from, Presence.composing)
+client.updatePresence(from, Presence.composing)
 if (!isGroup) return reply(ptbr.group())
 if (!isGroupAdmins) return reply(ptbr.admin())
 if (!isBotGroupAdmins) return reply(ptbr.Badmin())
@@ -3162,7 +3157,7 @@ contextInfo: {
 mentionedJid: [nomor]
 }
 }
-tiringa.groupSettingChange (from, GroupSettingChange.messageSend, true);
+client.groupSettingChange (from, GroupSettingChange.messageSend, true);
 reply(close)
 break
 
@@ -3172,13 +3167,13 @@ cp2 = `${Math.floor(Math.random() * 300) +600}`
 cp3 = `${Math.floor(Math.random() * 300) +600}`
 cp4 = `${Math.floor(Math.random() * 30) +60}`
 cpf = `${cp1}.${cp2}.${cp3}-${cp4}`
-tiringa.sendMessage(from, `CPF gerado: ${cpf}`, text, {quoted: mek})
+client.sendMessage(from, `CPF gerado: ${cpf}`, text, {quoted: mek})
 break
 
 //_ABRE O GRUPO
 case 'openg':
   case 'abrirg':
-tiringa.updatePresence(from, Presence.composing)
+client.updatePresence(from, Presence.composing)
 if (!isGroup) return reply(ptbr.group())
 if (!isGroupAdmins) return reply(ptbr.admin())
 if (!isBotGroupAdmins) return reply(ptbr.Badmin())
@@ -3188,8 +3183,8 @@ open = {
 mentionedJid: [sender]
   }
 }
-tiringa.groupSettingChange (from, GroupSettingChange.messageSend, false)
-tiringa.sendMessage(from, open, text, {
+client.groupSettingChange (from, GroupSettingChange.messageSend, false)
+client.sendMessage(from, open, text, {
   quoted: mek
 })
 break
@@ -3201,7 +3196,7 @@ case 'apagar':
 if (!isGroup)return reply(ptbr.group())
 if (!isGroupAdmins)return reply(ptbr.admin())
 try {
-tiringa.deleteMessage(from, {
+client.deleteMessage(from, {
   id: mek.message.extendedTextMessage.contextInfo.stanzaId, remoteJid: from, fromMe: true
 })
 } catch {
@@ -3235,9 +3230,9 @@ if (mek.message.extendedTextMessage === undefined || mek.message.extendedTextMes
 mentioned = mek.message.extendedTextMessage.contextInfo.mentionedJid[0]
 let { jid, id, notify } = groupMembers.find(x => x.jid === mentioned)
 try {
-pp = await tiringa.getProfilePicture(id)
+pp = await client.getProfilePicture(id)
 buffer = await getBuffer(pp)
-tiringa.updateProfilePicture(botNumber, buffer)
+client.updateProfilePicture(botNumber, buffer)
 mentions(`Roubei a foto de perfil de: @${id.split('@')[0]}`, [jid], true)
 } catch (e) {
 reply('ocorreu um erro')
@@ -3250,7 +3245,7 @@ msgFilter.isFiltered(from)
 const dadus = ["⚀","⚁","⚂","⚃","⚄","⚅"]
 dadu = dadus[Math.floor(Math.random() * dadus.length)]
 dador = fs.readFileSync('./database/dados/'+dadu+'.webp')
-tiringa.sendMessage(from, dador, sticker, {quoted: mek})
+client.sendMessage(from, dador, sticker, {quoted: mek})
 break
 
 case 'caracoroa':
@@ -3262,7 +3257,7 @@ fej = cararo[Math.floor(Math.random() * cararo.length)]
 gg = fej
 reply(`você conseguiu: ${fej}`)
 cararoa = fs.readFileSync('./database/cara/'+fej+'.webp')
-tiringa.sendMessage(from, cararoa, sticker, {quoted: mek})
+client.sendMessage(from, cararoa, sticker, {quoted: mek})
 break
                 
 case 'morte':
@@ -3276,7 +3271,7 @@ break
 case 'sn':
 const sn = ['sim', 'não']
 gosto = body.slice(3)
-if (args.length < 1) return tiringa.sendMessage(from, `Você deve fazer uma pergunta...\nExemplo: ${prefix}sn O Italu é um baiano preguiçoso?`, text, {quoted: mek})
+if (args.length < 1) return client.sendMessage(from, `Você deve fazer uma pergunta...\nExemplo: ${prefix}sn O Italu é um baiano preguiçoso?`, text, {quoted: mek})
 const jawab = sn[Math.floor(Math.random() * (sn.length))]
 hasil = `${gosto}\n\nSegundo meus cálculos, eu acredito que... ${jawab}`
 reply(hasil)
@@ -3296,7 +3291,7 @@ msgFilter.isFiltered(from)
 if (args.length < 1) return reply(ptbr.tterro())
 ppt = ["pedra","papel","tesoura"]
 ppy = ppt[Math.floor(Math.random() * ppt.length)]
-ppg = Math.floor(Math.random() * 13) + 349
+ppg = Math.floor(Math.random() * 13) + 5
 pptb = ppy
 pph = `Você ganhou ${ppg} em xp`
 if ((pptb == "pedra" && args == "papel") || 
@@ -3318,12 +3313,12 @@ if (vit == "vitoria") {
 var tes = "Vitória do jogador"
 }
 if (vit == "derrota" ) {
-var tes = "A vitória é do Tiringa-BOT"
+var tes = "A vitória é do Noah-bot"
 }
 if (vit == "empate" ) {
 var tes = "O jogo terminou em empate"
 }
-reply(`Tiringa-BOT jogou: ${pptb}\nO jogador jogou: ${args}\n\n${tes}`)
+reply(`Noah-bot jogou: ${pptb}\nO jogador jogou: ${args}\n\n${tes}`)
 if (tes == "Vitória do jogador") {
 reply(pph)
 }
@@ -3350,17 +3345,17 @@ break
 
 case 'ship':
 if (!isGroup) return reply(ptbr.group())
-const ag = await tiringa.getgroupMetadata.participants(from)
+const ag = await client.getgroupMetadata.participants(from)
 const mem2 = ag[Math.floor(Math.random() * (ag.length))]
 const mem1 = ag[Math.floor(Math.random() * (ag.length))]
 casal = `@${mem1.jid.split('@')[0]}  teste @${mem2.jid.split('@')[0]}`
-tiringa.sendMessage(from, casal, text, {quoted: mek, contextInfo: {"mentionedJid": [ag]}})
+client.sendMessage(from, casal, text, {quoted: mek, contextInfo: {"mentionedJid": [ag]}})
 break
 			
 case 'slot':
 msgFilter.isFiltered(from)
 const somtoy = sotoy[Math.floor(Math.random() * (sotoy.length))]	
-ppg = Math.floor(Math.random() * 13) + 349
+ppg = Math.floor(Math.random() * 13) + 20
 if ((somtoy == '🥑 : 🥑 : 🥑') ||(somtoy == '🍉 : 🍉 : 🍉') ||(somtoy == '🍓 : 🍓 : 🍓') ||(somtoy == '🍎 : 🍎 : 🍎') ||(somtoy == '🍍 : 🍍 : 🍍') ||(somtoy == '🥝 : 🥝 : 🥝') ||(somtoy == '🍑 : 🍑 : 🍑') ||(somtoy == '🥥 : 🥥 : 🥥') ||(somtoy == '🍋 : 🍋 : 🍋') ||(somtoy == '🍐 : 🍐 : 🍐') ||(somtoy == '🍌 : 🍌 : 🍌') ||(somtoy == '🍒 : 🍒 : 🍒') ||(somtoy == '🔔 : 🔔 : 🔔') ||(somtoy == '🍊 : 🍊 : 🍊') ||(somtoy == '🍇 : 🍇 : 🍇')) {
 var vitr = "Você ganhou!!!"
 } else {
@@ -3385,16 +3380,16 @@ setTimeout( () => {
 reply(`Você ganhou ${ppg} em xp!!!`)
 }, 1100)
 }
-tiringa.sendMessage(from, slott, text, {quoted: mek})
+client.sendMessage(from, slott, text, {quoted: mek})
 break
 
 case 'chance':
-tiringa.updatePresence(from, Presence.composing) 
+client.updatePresence(from, Presence.composing) 
 var avb = body.slice(7)
-if (args.length < 1) return tiringa.sendMessage(from, `Você precisa digitar da forma correta\nExemplo: ${prefix}chance do Italu ser um trouxa`, text, {quoted: mek})
+if (args.length < 1) return client.sendMessage(from, `Você precisa digitar da forma correta\nExemplo: ${prefix}chance do Italu ser um trouxa`, text, {quoted: mek})
 random = `${Math.floor(Math.random() * 100)}`
 hasil = `A chance ${body.slice(7)}\n\né de... ${random}%`
-tiringa.sendMessage(from, hasil, text, {quoted: mek, contextInfo: {mentionedJid: [sender]}})
+client.sendMessage(from, hasil, text, {quoted: mek, contextInfo: {mentionedJid: [sender]}})
 break
      
 case 'rola':
@@ -3409,7 +3404,7 @@ reply(hasil)
 break
    
 case 'gay':
-tiringa.updatePresence(from, Presence.composing) 
+client.updatePresence(from, Presence.composing) 
 random = `${Math.floor(Math.random() * 100)}`
 boiola = random
 if (boiola < 20 ) {bo = 'hmm... você é hetero😔'} else if (boiola == 21 ) {bo = '+/- boiola'} else if (boiola == 23 ) {bo = '+/- boiola'} else if (boiola == 24 ) {bo = '+/- boiola'} else if (boiola == 25 ) {bo = '+/- boiola'} else if (boiola == 26 ) {bo = '+/- boiola'} else if (boiola == 27 ) {bo = '+/- boiola'} else if (boiola == 28 ) {bo = '+/- boiola'} else if (boiola == 29 ) {bo = '+/- boiola'} else if (boiola == 30 ) {bo = '+/- boiola'} else if (boiola == 31 ) {bo = 'tenho minha desconfiança...😑'} else if (boiola == 32 ) {bo = 'tenho minha desconfiança...😑'} else if (boiola == 33 ) {bo = 'tenho minha desconfiança...😑'} else if (boiola == 34 ) {bo = 'tenho minha desconfiança...😑'} else if (boiola == 35 ) {bo = 'tenho minha desconfiança...😑'} else if (boiola == 36 ) {bo = 'tenho minha desconfiança...😑'} else if (boiola == 37 ) {bo = 'tenho minha desconfiança...😑'} else if (boiola == 38 ) {bo = 'tenho minha desconfiança...😑'} else if (boiola == 39 ) {bo = 'tenho minha desconfiança...😑'} else if (boiola == 40 ) {bo = 'tenho minha desconfiança...😑'} else if (boiola == 41 ) {bo = 'você é né?😏'} else if (boiola == 42 ) {bo = 'você é né?😏'} else if (boiola == 43 ) {bo = 'você é né?😏'} else if (boiola == 44 ) {bo = 'você é né?😏'} else if (boiola == 45 ) {bo = 'você é né?😏'} else if (boiola == 46 ) {bo = 'você é né?😏'} else if (boiola == 47 ) {bo = 'você é né?😏'} else if (boiola == 48 ) {bo = 'você é né?😏'} else if (boiola == 49 ) {bo = 'você é né?😏'} else if (boiola == 50 ) {bo = 'você é ou não?🧐'} else if (boiola > 51) {bo = 'você é gay🙈'
@@ -3431,11 +3426,11 @@ var morte = "Tinha uma bala no tambor, POW!"
 }
 if (morte == "Tinha uma bala no tambor, POW!") {
 setTimeout( () => {
-tiringa.sendMessage(from, figb, sticker, {quoted: mek})
+client.sendMessage(from, figb, sticker, {quoted: mek})
 }, 2100)
 }
 setTimeout( () => {
-tiringa.sendMessage(from, morte, text, {quoted: mek})
+client.sendMessage(from, morte, text, {quoted: mek})
 }, 2300)
 break
 
@@ -3474,8 +3469,8 @@ IA()
 tttset.reActivate1 = "on"	
 }
 costum('O jogo começou!!!\nModo: ${tttset.tttdifficulty}', text, tescuk, crtt)
-tiringa.sendMessage(from, `🌀1️⃣2️⃣3️⃣\n🅰️${esp.a1}${esp.a2}${esp.a3}\n🅱️${esp.b1}${esp.b2}${esp.b3}\n©️${esp.c1}${esp.c2}${esp.c3}`,text )
-tiringa.sendMessage(from,`Caso não saiba como jogar digite: ${prefix}ttthelp`, text) 
+client.sendMessage(from, `🌀1️⃣2️⃣3️⃣\n🅰️${esp.a1}${esp.a2}${esp.a3}\n🅱️${esp.b1}${esp.b2}${esp.b3}\n©️${esp.c1}${esp.c2}${esp.c3}`,text )
+client.sendMessage(from,`Caso não saiba como jogar digite: ${prefix}ttthelp`, text) 
 setTimeout( () => {
 tttset.waitingTime = "off"
 tttset.autoEndTime = "on"
@@ -3485,14 +3480,14 @@ addLimit(sender, daily)
 break
 
 case 'ttthelp':
-tiringa.sendMessage(from, ttthelp(prefix), text)
+client.sendMessage(from, ttthelp(prefix), text)
 break
 
 case 'tttme':
 if (!isGroup) return reply(ptbr.group())
 const checkTTTIdMe = getTTTId(sender)
 if (checkTTTIdMe === undefined) addTTTId(sender)
-tiringa.sendMessage(from, tttme(pushname, getTTTwins(sender), getTTTdefeats(sender), getTTTties(sender), getTTTpoints(sender)), text, {quoted:mek})
+client.sendMessage(from, tttme(pushname, getTTTwins(sender), getTTTdefeats(sender), getTTTties(sender), getTTTpoints(sender)), text, {quoted:mek})
 break
 
 case 'tttrank':
@@ -3512,7 +3507,7 @@ mentioned_jid.push(tictactoe[i].jid)
 mentions(board, mentioned_jid, true)
 } catch (err) {
 console.log(err)
-await tiringa.sendMessage(from, `Humm, é necessário que no mínimo 3 pessoas tenham jogado...`, text, {quoted: mek})
+await client.sendMessage(from, `Humm, é necessário que no mínimo 3 pessoas tenham jogado...`, text, {quoted: mek})
 }
 break
 
@@ -3650,9 +3645,9 @@ randomTTTXP = Math.floor(Math.random() * 1000) + 1000
 addLevelingXp(tttset.player, randomTTTXP)
 break
 }
-tiringa.sendMessage(from, `🎉🎉 VITÓRIA DO JOGADOR 🎉🎉\n\n➣  RECOMPENSA: +${randomTTTXP} XP 🔮`, text)
+client.sendMessage(from, `🎉🎉 VITÓRIA DO JOGADOR 🎉🎉\n\n➣  RECOMPENSA: +${randomTTTXP} XP 🔮`, text)
 } else {
-tiringa.sendMessage(from, `🎉🎉 VITÓRIA DO JOGADOR 🎉🎉`, text)
+client.sendMessage(from, `🎉🎉 VITÓRIA DO JOGADOR 🎉🎉`, text)
 }
 const currentTTTwins = getTTTwins(tttset.player)
 const checkTTTIdWin = getTTTId(tttset.player)
@@ -3684,9 +3679,9 @@ randomTTTXP = 0
 addLevelingXp(tttset.player, randomTTTXP)
 break
 }	
-tiringa.sendMessage(from, `🎉🎉 VITÓRIA DO TIRINGA-BOT 🎉🎉\n\n➣  PUNIÇÃO: ${randomTTTXP} XP 🔮`, text)
+client.sendMessage(from, `🎉🎉 VITÓRIA DO TIRINGA-BOT 🎉🎉\n\n➣  PUNIÇÃO: ${randomTTTXP} XP 🔮`, text)
 } else {
-tiringa.sendMessage(from, `🎉🎉 VITÓRIA DO TIRINGA-BOT 🎉🎉`, text)
+client.sendMessage(from, `🎉🎉 VITÓRIA DO TIRINGA-BOT 🎉🎉`, text)
 }
 const currentTTTdefeats = getTTTdefeats(tttset.player)
 const checkTTTIdDefeat = getTTTId(tttset.player)
@@ -3700,9 +3695,9 @@ tttset.tttstatus = "off"
 tttset.waitingTime = "on"
 } else if (Tie()) {
 if (isLevelingOn) {
-tiringa.sendMessage(from, `🎉🎉 EMPATE 🎉🎉\n\n➣  NÃO HÁ GANHOS NEM PERDAS`, text)
+client.sendMessage(from, `🎉🎉 EMPATE 🎉🎉\n\n➣  NÃO HÁ GANHOS NEM PERDAS`, text)
 } else {
-tiringa.sendMessage(from, `🎉🎉 EMPATE 🎉🎉`, text)
+client.sendMessage(from, `🎉🎉 EMPATE 🎉🎉`, text)
 }
 const currentTTTties = getTTTties(tttset.player)
 const checkTTTIdTie = getTTTId(tttset.player)
@@ -3737,7 +3732,7 @@ sus =
                   1 impostor remain   。　.
 　 　　。　　 　　　　ﾟ　　　.　      　　　.
 ,　　　　.                  .`
-//  tiringa.groupRemove(from, mentioned)
+//  client.groupRemove(from, mentioned)
 mentions(`${sus}`, mentioned, true)
 break
 
@@ -3781,7 +3776,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -3800,7 +3795,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -3819,7 +3814,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -3838,7 +3833,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -3857,7 +3852,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -3876,7 +3871,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -3895,7 +3890,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -3914,7 +3909,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -3933,7 +3928,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -3952,7 +3947,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -3970,7 +3965,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -3988,7 +3983,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -4006,7 +4001,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -4019,7 +4014,7 @@ try {
 reply(ptbr.wait())
 axios.get(`https://nekos.life/api/v2/img/kemonomimi`).then((res)=>{
 imageToBase64(res.data.url).then((response) => {var buf = Buffer.from(response, 'base64');
-tiringa.sendMessage(from, buf, image, {quoted: mek,caption: "KAWAII!!"})
+client.sendMessage(from, buf, image, {quoted: mek,caption: "KAWAII!!"})
 })})
 } catch (e) {
 console.log(`Error :`, color(e,'red'))
@@ -4032,7 +4027,7 @@ try {
 reply(ptbr.wait())
 axios.get(`https://nekos.life/api/v2/img/kemonomimi`).then((res)=>{
 imageToBase64(res.data.url).then((response) => {var buf = Buffer.from(response, 'base64');
-tiringa.sendMessage(from, buf, image, {quoted: mek})
+client.sendMessage(from, buf, image, {quoted: mek})
 })})
 } catch (e) {
 console.log(`Error :`, color(e,'red'))
@@ -4045,7 +4040,7 @@ try {
 reply(ptbr.wait())
 axios.get(`https://nekos.life/api/v2/img/kuni`).then((res)=>{
 imageToBase64(res.data.url).then((response) => {var buf = Buffer.from(response, 'base64');
-tiringa.sendMessage(from, buf, image, {quoted: mek})
+client.sendMessage(from, buf, image, {quoted: mek})
 })})
 } catch (e) {
 console.log(`Error :`, color(e,'red'))
@@ -4062,7 +4057,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -4077,7 +4072,7 @@ reply(ptbr.waitsfw())
 try {  
 hah = await fetchJson(`https://freerestapi.herokuapp.com/api/v1/randomp`)
 hehe = await getBuffer(hah.url)
-tiringa.sendMessage(from, hehe, image, {quoted:mek})
+client.sendMessage(from, hehe, image, {quoted:mek})
 } catch (e) {
 console.log(`Error :`, color(e,'red'))
 reply('❌ocorreu um erro❌\n\nTente novamente. ')
@@ -4091,7 +4086,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -4108,7 +4103,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -4125,7 +4120,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -4142,7 +4137,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -4162,7 +4157,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -4182,7 +4177,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -4201,7 +4196,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -4220,7 +4215,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -4239,7 +4234,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -4258,7 +4253,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -4277,7 +4272,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -4296,7 +4291,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -4315,7 +4310,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -4334,7 +4329,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -4353,7 +4348,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -4372,7 +4367,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -4391,7 +4386,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -4410,7 +4405,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -4429,7 +4424,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -4448,7 +4443,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -4467,7 +4462,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -4486,7 +4481,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -4506,7 +4501,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -4525,7 +4520,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -4544,7 +4539,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -4563,7 +4558,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -4582,7 +4577,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -4601,7 +4596,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -4620,7 +4615,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -4639,7 +4634,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -4658,7 +4653,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -4677,7 +4672,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -4696,7 +4691,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -4715,7 +4710,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -4734,7 +4729,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -4753,7 +4748,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -4770,7 +4765,7 @@ reply(ptbr.waitsfw())
 loli.getNSFWLoli(async (err, res) => {
 if (err) return reply('❌ocorreu um erro❌\n\nTente novamente. ')
 buffer = await getBuffer(res.url)
-tiringa.sendMessage(from, buffer, image, {quoted: mek, caption: 'Seu lolicon safado😔'})
+client.sendMessage(from, buffer, image, {quoted: mek, caption: 'Seu lolicon safado😔'})
 })
 } catch (e) {
 console.log(`Error :`, color(e,'red'))
@@ -4788,7 +4783,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } catch (e) {
@@ -4812,7 +4807,7 @@ imageToBase64(res.data.url)
 var buf = Buffer.from(ress, 'base64')
 a = webp2gifFile(buf)
 mp4 = getBuffer(a.result)
-tiringa.sendMessage(from, mp4, MessageType.video, {mimetype: 'video/gif', filename: `stick.gif`, quoted: mek, caption: '✅'})
+client.sendMessage(from, mp4, MessageType.video, {mimetype: 'video/gif', filename: `stick.gif`, quoted: mek, caption: '✅'})
 })
 })
 } catch (e) {
@@ -4839,7 +4834,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.video, {mimetype: 'video/gif', filename: `stick.gif`, quoted: mek, caption: '✅'})
+client.sendMessage(from, buf, MessageType.video, {mimetype: 'video/gif', filename: `stick.gif`, quoted: mek, caption: '✅'})
 })
 })
 } catch (e) {
@@ -4855,7 +4850,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 break
@@ -4867,7 +4862,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 break
@@ -4883,7 +4878,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } else if(args[0] === "2") {
@@ -4892,7 +4887,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } else if(args[0] === "3") {
@@ -4901,7 +4896,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } else if(args[0] === "4") {
@@ -4910,7 +4905,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } else if(args[0] === "6") {
@@ -4919,7 +4914,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } else if(args[0] === "7") {
@@ -4928,7 +4923,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } else if(args[0] === "8") {
@@ -4937,7 +4932,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } else if(args[0] === "9") {
@@ -4946,7 +4941,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 } else {
@@ -4955,7 +4950,7 @@ imageToBase64(res.data.url)
 .then(
 (ress) => {
 var buf = Buffer.from(ress, 'base64')
-tiringa.sendMessage(from, buf, MessageType.image, {quoted: mek})
+client.sendMessage(from, buf, MessageType.image, {quoted: mek})
 })
 })
 }
@@ -4968,8 +4963,8 @@ break
 
 default:
 if (body == `${prefix}${command}`) {
-hsl = `        ────────────────\nOi @${sender.split("@")[0]}!!\nO comando: ${prefix}${command} não existe\n\nTem certeza que digitou corretamente?🧙‍♂️\nUse ${prefix}Menu para listar meus comandos\n        ────────────────`
-tiringa.sendMessage(from, hsl, text, {quoted: mek, contextInfo: {mentionedJid: [sender]}})
+hsl = `\nOi @${sender.split("@")[0]}!!\nO comando: ${prefix}${command} não existe\n\nTem certeza que digitou corretamente?\nUse ${prefix}Menu para listar meus comandos\n`
+client.sendMessage(from, hsl, text, {quoted: mek, contextInfo: {mentionedJid: [sender]}})
 }
 }
 } catch (e) {
