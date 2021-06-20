@@ -1,7 +1,6 @@
 const ttthelp = (prefix) => {
     return `
-「 \u{1F4AE} Tic Tac Toe \u{1F4AE} 」
-By: Resen
+「 \u{help} Tic Tac Toe \u{help} 」
 ◪ BETA, EVITE USAR
 
 ◪ APENAS PARA GRUPOS
